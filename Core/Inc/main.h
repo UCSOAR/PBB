@@ -31,14 +31,15 @@ extern "C" {
 
 #include "stm32g4xx_ll_usart.h"
 #include "stm32g4xx_ll_rcc.h"
-#include "stm32g4xx_ll_system.h"
-#include "stm32g4xx_ll_gpio.h"
-#include "stm32g4xx_ll_exti.h"
 #include "stm32g4xx_ll_bus.h"
 #include "stm32g4xx_ll_cortex.h"
+#include "stm32g4xx_ll_system.h"
 #include "stm32g4xx_ll_utils.h"
 #include "stm32g4xx_ll_pwr.h"
+#include "stm32g4xx_ll_gpio.h"
 #include "stm32g4xx_ll_dma.h"
+
+#include "stm32g4xx_ll_exti.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -60,8 +61,6 @@ extern "C" {
 
 /* USER CODE END EM */
 
-void HAL_TIM_MspPostInit(TIM_HandleTypeDef *htim);
-
 /* Exported functions prototypes ---------------------------------------------*/
 void Error_Handler(void);
 
@@ -70,52 +69,52 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define Debug_led1_Pin LL_GPIO_PIN_13
-#define Debug_led1_GPIO_Port GPIOC
-#define Debug_led2_Pin LL_GPIO_PIN_14
-#define Debug_led2_GPIO_Port GPIOC
-#define Debug_led3_Pin LL_GPIO_PIN_15
-#define Debug_led3_GPIO_Port GPIOC
-#define RESET_Pin LL_GPIO_PIN_10
-#define RESET_GPIO_Port GPIOG
-#define USART3_TX_FSB_Pin LL_GPIO_PIN_10
-#define USART3_TX_FSB_GPIO_Port GPIOB
-#define USART3_RX_FSB_Pin LL_GPIO_PIN_11
-#define USART3_RX_FSB_GPIO_Port GPIOB
-#define LC2_DRDY_Pin LL_GPIO_PIN_12
-#define LC2_DRDY_GPIO_Port GPIOB
-#define LC1_DRDY_Pin LL_GPIO_PIN_13
-#define LC1_DRDY_GPIO_Port GPIOB
-#define USART3_DE_FSB_Pin LL_GPIO_PIN_14
-#define USART3_DE_FSB_GPIO_Port GPIOB
-#define TC3_nReady_Pin LL_GPIO_PIN_8
-#define TC3_nReady_GPIO_Port GPIOD
-#define TC3_cs_Pin LL_GPIO_PIN_9
-#define TC3_cs_GPIO_Port GPIOD
-#define TC3_nFAULT_Pin LL_GPIO_PIN_10
-#define TC3_nFAULT_GPIO_Port GPIOD
-#define Ext_ind_led1_Pin LL_GPIO_PIN_15
-#define Ext_ind_led1_GPIO_Port GPIOA
-#define Ext_ind_led2_Pin LL_GPIO_PIN_10
-#define Ext_ind_led2_GPIO_Port GPIOC
-#define Ext_ind_led3_Pin LL_GPIO_PIN_11
-#define Ext_ind_led3_GPIO_Port GPIOC
-#define Ext_ind_led4_Pin LL_GPIO_PIN_12
-#define Ext_ind_led4_GPIO_Port GPIOC
-#define Ext_ind_led5_Pin LL_GPIO_PIN_0
-#define Ext_ind_led5_GPIO_Port GPIOD
-#define TC1_nFault_Pin LL_GPIO_PIN_1
-#define TC1_nFault_GPIO_Port GPIOD
-#define TC1_cs_Pin LL_GPIO_PIN_2
-#define TC1_cs_GPIO_Port GPIOD
-#define TC1_nReady_Pin LL_GPIO_PIN_4
-#define TC1_nReady_GPIO_Port GPIOB
-#define TC2_nFault_Pin LL_GPIO_PIN_5
-#define TC2_nFault_GPIO_Port GPIOB
-#define TC2_cs_Pin LL_GPIO_PIN_6
-#define TC2_cs_GPIO_Port GPIOB
-#define TC2_nReady_Pin LL_GPIO_PIN_7
-#define TC2_nReady_GPIO_Port GPIOB
+#define DRAIN_EN_Pin GPIO_PIN_13
+#define DRAIN_EN_GPIO_Port GPIOC
+#define DEBUG_SW_NRST_Pin GPIO_PIN_10
+#define DEBUG_SW_NRST_GPIO_Port GPIOG
+#define TC_FAULT2_OUT_N_Pin GPIO_PIN_0
+#define TC_FAULT2_OUT_N_GPIO_Port GPIOC
+#define SPI2_TC_CS2_N_Pin GPIO_PIN_3
+#define SPI2_TC_CS2_N_GPIO_Port GPIOC
+#define FLASH_RESET_Pin GPIO_PIN_4
+#define FLASH_RESET_GPIO_Port GPIOA
+#define QSPI_BK_NCS_Pin GPIO_PIN_5
+#define QSPI_BK_NCS_GPIO_Port GPIOA
+#define TRANSCEIVER_DE_Pin GPIO_PIN_2
+#define TRANSCEIVER_DE_GPIO_Port GPIOB
+#define TRANSCEIVER_RE_N_Pin GPIO_PIN_7
+#define TRANSCEIVER_RE_N_GPIO_Port GPIOE
+#define TC_DRDY1_OUT_N_Pin GPIO_PIN_9
+#define TC_DRDY1_OUT_N_GPIO_Port GPIOE
+#define TC_FAULT1_OUT_N_Pin GPIO_PIN_10
+#define TC_FAULT1_OUT_N_GPIO_Port GPIOE
+#define ADC1_IN7_Pin GPIO_PIN_12
+#define ADC1_IN7_GPIO_Port GPIOE
+#define ADC1_IN1_Pin GPIO_PIN_13
+#define ADC1_IN1_GPIO_Port GPIOE
+#define SPI2_TC_CS1_N_Pin GPIO_PIN_15
+#define SPI2_TC_CS1_N_GPIO_Port GPIOE
+#define SPI2_TC_SCK_Pin GPIO_PIN_13
+#define SPI2_TC_SCK_GPIO_Port GPIOB
+#define SPI2_TC_MOSI_Pin GPIO_PIN_15
+#define SPI2_TC_MOSI_GPIO_Port GPIOB
+#define I2C3_SCL_TEMP_Pin GPIO_PIN_8
+#define I2C3_SCL_TEMP_GPIO_Port GPIOC
+#define I2C3_SDA_TEMP_Pin GPIO_PIN_9
+#define I2C3_SDA_TEMP_GPIO_Port GPIOC
+#define SPI2_TC_CS3_N_Pin GPIO_PIN_9
+#define SPI2_TC_CS3_N_GPIO_Port GPIOA
+#define HEATER_ENABLE_Pin GPIO_PIN_4
+#define HEATER_ENABLE_GPIO_Port GPIOB
+#define MEV_ENABLE_Pin GPIO_PIN_5
+#define MEV_ENABLE_GPIO_Port GPIOB
+#define TC_FAULT3_OUT_N_Pin GPIO_PIN_6
+#define TC_FAULT3_OUT_N_GPIO_Port GPIOB
+#define TC_DRDY3_OUT_N_Pin GPIO_PIN_7
+#define TC_DRDY3_OUT_N_GPIO_Port GPIOB
+#define TC_DRDY2_OUT_N_Pin GPIO_PIN_9
+#define TC_DRDY2_OUT_N_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 

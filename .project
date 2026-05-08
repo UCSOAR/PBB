@@ -1,6 +1,6 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>STM32G491ME</name>
+	<name>PBB</name>
 	<comment></comment>
 	<projects>
 	</projects>
@@ -28,6 +28,13 @@
 		<nature>com.st.stm32cube.ide.mcu.MCURootProjectNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.managedBuildNature</nature>
 		<nature>org.eclipse.cdt.managedbuilder.core.ScannerConfigNature</nature>
+		<nature>com.st.stm32cube.ide.mcu.MCUNonUnderRootProjectNature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Drivers/CMSIS/system_stm32g4xx.c</name>
+			<type>1</type>
+			<locationURI>PROJECT_LOC/Core/Src/system_stm32g4xx.c</locationURI>
+		</link>
+	</linkedResources>
 </projectDescription>
-

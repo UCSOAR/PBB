@@ -47,11 +47,5 @@ constexpr uint8_t TASK_DEBUG_PRIORITY = 2;             // Priority of the debug 
 constexpr uint8_t TASK_DEBUG_QUEUE_DEPTH_OBJS = 10;    // Size of the debug task queue
 constexpr uint16_t TASK_DEBUG_STACK_DEPTH_WORDS = 512; // Size of the debug task stack
 
-// FILESYSTEM TASK
-constexpr uint8_t TASK_FILESYSTEM_TASK_PRIORITY = 3;         // Priority of the filesystem task
-constexpr uint8_t TASK_FILESYSTEM_QUEUE_DEPTH_OBJS = 8;      // Size of the filesystem task queue
-constexpr uint16_t TASK_FILESYSTEM_STACK_DEPTH_WORDS = 1024; // Size of the filesystem task stack
-constexpr uint32_t FILESYSTEM_TASK_QUEUE_TIMEOUT_MS = 100;   // Queue timeout for filesystem task
-constexpr uint32_t FILESYSTEM_TASK_LOOP_DELAY_MS = 1000;     // Main loop delay for filesystem task
 
 #endif // CUBE_MAIN_SYSTEM_DEFINES_H

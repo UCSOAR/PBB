@@ -38,34 +38,34 @@ $(wildcard ../makefile.init) \
 $(wildcard ../makefile.targets) \
 
 
-BUILD_ARTIFACT_NAME := STM32G491ME
+BUILD_ARTIFACT_NAME := PBB
 BUILD_ARTIFACT_EXTENSION :=
 BUILD_ARTIFACT_PREFIX :=
 BUILD_ARTIFACT := $(BUILD_ARTIFACT_PREFIX)$(BUILD_ARTIFACT_NAME)$(if $(BUILD_ARTIFACT_EXTENSION),.$(BUILD_ARTIFACT_EXTENSION),)
 
 # Add inputs and outputs from these tool invocations to the build variables 
 EXECUTABLES += \
-STM32G491ME \
+PBB \
 
 MAP_FILES += \
-STM32G491ME.map \
+PBB.map \
 
 SIZE_OUTPUT += \
 default.size.stdout \
 
 OBJDUMP_LIST += \
-STM32G491ME.list \
+PBB.list \
 
 
 # All Target
 all: main-build
 
 # Main-build Target
-main-build: STM32G491ME secondary-outputs
+main-build: PBB secondary-outputs
 
 # Tool invocations
-STM32G491ME STM32G491ME.map: $(OBJS) $(USER_OBJS) C:\Users\eljav\Documents\SOAR\STM32G491METemplateRepository\STM32G491MESX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "STM32G491ME" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\eljav\Documents\SOAR\STM32G491METemplateRepository\STM32G491MESX_FLASH.ld" --specs=nosys.specs -Wl,-Map="STM32G491ME.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+PBB PBB.map: $(OBJS) $(USER_OBJS) C:\Users\Andrey\Documents\AllRepos\newSOAR\PBB\STM32G491MESX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "PBB" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Andrey\Documents\AllRepos\newSOAR\PBB\STM32G491MESX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PBB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
@@ -74,14 +74,14 @@ default.size.stdout: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
 	@echo 'Finished building: $@'
 	@echo ' '
 
-STM32G491ME.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "STM32G491ME.list"
+PBB.list: $(EXECUTABLES) makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-objdump -h -S $(EXECUTABLES) > "PBB.list"
 	@echo 'Finished building: $@'
 	@echo ' '
 
 # Other Targets
 clean:
-	-$(RM) STM32G491ME STM32G491ME.list STM32G491ME.map default.size.stdout
+	-$(RM) PBB PBB.list PBB.map default.size.stdout
 	-@echo ' '
 
 secondary-outputs: $(SIZE_OUTPUT) $(OBJDUMP_LIST)

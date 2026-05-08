@@ -38,10 +38,12 @@ void run_StartDefaultTask();
 // UART Driver
 class UARTDriver;
 namespace Driver {
-extern UARTDriver usart2;
+extern UARTDriver uart5;
+extern UARTDriver usart1;
 }
 namespace UART {
-constexpr UARTDriver* Debug = &Driver::usart2;
+constexpr UARTDriver* Debug = &Driver::uart5;
+constexpr UARTDriver* pbb_rs485 = &Driver::usart1;
 }
 
 /* System Handles

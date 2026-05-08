@@ -159,7 +159,6 @@ ErrorStatus LL_USART_DeInit(const USART_TypeDef *USARTx)
     /* Release reset of USART clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USART2);
   }
-#if defined(USART3)
   else if (USARTx == USART3)
   {
     /* Force reset of USART clock */
@@ -168,7 +167,6 @@ ErrorStatus LL_USART_DeInit(const USART_TypeDef *USARTx)
     /* Release reset of USART clock */
     LL_APB1_GRP1_ReleaseReset(LL_APB1_GRP1_PERIPH_USART3);
   }
-#endif /* USART3 */
 #if defined(UART4)
   else if (USARTx == UART4)
   {
@@ -269,12 +267,10 @@ ErrorStatus LL_USART_Init(USART_TypeDef *USARTx, const LL_USART_InitTypeDef *USA
     {
       periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART2_CLKSOURCE);
     }
-#if defined(USART3)
     else if (USARTx == USART3)
     {
       periphclk = LL_RCC_GetUSARTClockFreq(LL_RCC_USART3_CLKSOURCE);
     }
-#endif /* USART3 */
 #if defined(UART4)
     else if (USARTx == UART4)
     {
