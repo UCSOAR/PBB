@@ -7,16 +7,16 @@
 S_SRCS += \
 ../Core/Startup/startup_stm32g491mesx.s 
 
-OBJS += \
-./Core/Startup/startup_stm32g491mesx.o 
-
 S_DEPS += \
 ./Core/Startup/startup_stm32g491mesx.d 
+
+OBJS += \
+./Core/Startup/startup_stm32g491mesx.o 
 
 
 # Each subdirectory must supply rules for building sources it contributes
 Core/Startup/%.o: ../Core/Startup/%.s Core/Startup/subdir.mk
-	arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Drivers/STM32G4xx_HAL_Driver" -I../../Core/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../Middlewares/Third_Party/FreeRTOS/Source/include -I../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@" "$<"
+	arm-none-eabi-gcc -mcpu=cortex-m4 -g3 -DDEBUG -c -I../Core/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc -I../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../Middlewares/Third_Party/FreeRTOS/Source/include -I../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../Drivers/CMSIS/Include -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Drivers/STM32G4xx_HAL_Driver" -I../../Core/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc -I../../Drivers/STM32G4xx_HAL_Driver/Inc/Legacy -I../../Middlewares/Third_Party/FreeRTOS/Source/include -I../../Middlewares/Third_Party/FreeRTOS/Source/CMSIS_RTOS -I../../Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F -I../../Drivers/CMSIS/Device/ST/STM32G4xx/Include -I../../Drivers/CMSIS/Include -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/SysCore" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/SysCore/Inc" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/SoarOS/Core/Inc" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/SoarOS/Core" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/SoarOS/Drivers" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/SoarOS/Drivers/Inc" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/SoarOS" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/LoggingModule" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/LoggingModule/Inc" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/Flash/Driver" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/SoarOS/Libraries/embedded-template-library/include" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/Flash/Inc" -I"C:/Users/Andrey/Documents/AllRepos/newSOAR/PBB/Components/SoarDebug/Inc" -x assembler-with-cpp -MMD -MP -MF"$(@:%.o=%.d)" -MT"$@" --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -o "$@" "$<"
 
 clean: clean-Core-2f-Startup
 
