@@ -47,6 +47,8 @@ PreLaunch::PreLaunch()
  */
 RocketState PreLaunch::OnEnter()
 {
+    GPIO::Drain::Close();
+    GPIO::_MAIN_ENGINE_VALVE::Close();
     // TODO NEW
     // PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
     // PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_RESET);
@@ -83,12 +85,16 @@ RocketState PreLaunch::HandleNonIgnitionCommands(RocketControlCommands rcAction,
     case RSC_ANY_TO_ABORT:
         // Transition to abort state
         return RS_ABORT;
-    case RSC_OPEN_VENT:
-//        GPIO::Vent::Open();
-        // SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(currentState));
+    case RSC_OPEN_DRAIN:
+        GPIO::Drain::Open();
+        // SOAR_PRINT("Drain was opened in [ %s ] state\n", StateToString(currentState));
         break;
-    case RSC_CLOSE_VENT:
-        // SOAR_PRINT("Vents were closed in [ %s ] state\n", StateToString(currentState));
+    case RSC_CLOSE_DRAIN:
+        GPIO::Drain::Close();
+        // SOAR_PRINT("Drain was closed in [ %s ] state\n", StateToString(currentState));
+        break;
+    case RSC_MEV_CLOSE:
+        GPIO::_MAIN_ENGINE_VALVE::Close();
         break;
     default:
         break;
@@ -156,6 +162,8 @@ Fill::Fill()
  */
 RocketState Fill::OnEnter()
 {
+    GPIO::Drain::Close();
+    GPIO::_MAIN_ENGINE_VALVE::Close();
 
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
@@ -242,7 +250,9 @@ Arm::Arm()
  */
 RocketState Arm::OnEnter()
 {
-    // Assert the vent and drain are closed
+    // Assert the drain IS closed
+    GPIO::Drain::Close();
+    GPIO::_MAIN_ENGINE_VALVE::Close();
 
     return rsStateID;
 }
@@ -307,7 +317,9 @@ Ignition::Ignition()
  */
 RocketState Ignition::OnEnter()
 {
-    // Assert vent and drain closed
+    // Assert drain closed
+    GPIO::Drain::Close();
+    GPIO::_MAIN_ENGINE_VALVE::Close();
     
     // TODO NEW
     // PBBRxProtocolTask::SendFastLogCommand(Proto::FastLog::FastLogCommand::FL_PEND);
@@ -379,10 +391,11 @@ Launch::Launch()
  */
 RocketState Launch::OnEnter()
 {
-    // Assert vent and drain closed
-	SOAR_PRINT("HELLO");
+    // Assert drain closed
+    GPIO::Drain::Close();
+    GPIO::_MAIN_ENGINE_VALVE::Open();
 
-    // TODO NEW
+    // TODO NEW UPDATE TIMINGS
     TimerTransitions::Inst().BurnSequence();
 
     // TODO NEW
@@ -449,7 +462,8 @@ RocketState Burn::OnEnter()
 {
     // TODO: Debug print - can remove in final versions
 
-    // Assert vent/drain state
+    // Assert drain state
+    GPIO::Drain::Close();
 
     // Start the coast transition timer (7 seconds - TBD based on sims)
     TimerTransitions::Inst().CoastSequence();
@@ -514,7 +528,8 @@ Coast::Coast()
  */
 RocketState Coast::OnEnter()
 {
-    // Assert vent/drain state
+    // Assert drain state
+    GPIO::Drain::Close();
 
 	TimerTransitions::Inst().BrakingSequence();
     return rsStateID;
@@ -580,8 +595,8 @@ Braking::Braking()
  */
 RocketState Braking::OnEnter()
 {
-    // Assert vent/drain state
-
+    // Assert drain state
+    GPIO::Drain::Close();
 	TimerTransitions::Inst().DescentSequence();
     return rsStateID;
 }
@@ -643,8 +658,8 @@ Descent::Descent()
  */
 RocketState Descent::OnEnter()
 {
-    // Open the vent and drain
-//    GPIO::Vent::Open();
+    // Open the drain
+    GPIO::Drain::Open();
 
     // SOAR_PRINT("Vents were opened in [ %s ] state\n", StateToString(rsStateID));
 
@@ -706,13 +721,13 @@ Touchdown::Touchdown()
 }
 
 /**
- * @brief Entry to Recovery state
+ * @brief Entry to Touchdown state
  * @return The state we're entering
  */
 RocketState Touchdown::OnEnter()
 {
     // Assert vent and drain are open
-//    GPIO::Vent::Open();
+    GPIO::Drain::Open();
     
     //TODO: Consider adding periodic AUTO-VENT timers every 100 seconds to make sure they're open)
     //TODO: Send out GPS and GPIO Status (actually should be happening always anyway)
@@ -863,6 +878,12 @@ RocketState Test::HandleCommand(Command& cm)
         switch (cm.GetTaskCommand()) {
         case RSC_GOTO_PRELAUNCH:
             nextStateID = RS_PRELAUNCH;
+            break;
+        case RSC_TEST_MEV_OPEN: // Send the open command
+            GPIO::_MAIN_ENGINE_VALVE::Open();
+            break;
+        case RSC_MEV_CLOSE: // Send the close command
+            GPIO::_MAIN_ENGINE_VALVE::Close();
             break;
         default:
             nextStateID = PreLaunch::HandleNonIgnitionCommands((RocketControlCommands)cm.GetTaskCommand(), GetStateID());

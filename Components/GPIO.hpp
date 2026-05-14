@@ -17,7 +17,7 @@
 
 namespace GPIO
 {
-    namespace _MAIN_ENGINE_VALVE // Main engine valve GPIO Open/Close should ONLY be touched by MEVManager
+    namespace _MAIN_ENGINE_VALVE
     {
         inline void Open() {
         	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_SET);
