@@ -44,7 +44,7 @@ extern UARTDriver usart1;
 }
 namespace UART {
 constexpr UARTDriver* Debug = &Driver::uart5;
-constexpr UARTDriver* pbb = &Driver::usart1;
+constexpr UARTDriver* PBB = &Driver::usart1;
 }
 
 /* System Handles
