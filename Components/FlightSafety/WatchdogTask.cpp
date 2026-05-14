@@ -2,7 +2,7 @@
  ********************************************************************************
  * @file    WatchdogTask.cpp
  * @author  Shivam Desai
- * @date    May 9, 2026
+ * @date    May 14, 2026
  * @brief
  ********************************************************************************
  */
@@ -38,6 +38,7 @@ constexpr uint32_t HEARTBEAT_TIMER_PERIOD_MS = 20 * 60 * 1000;
  */
 WatchdogTask::WatchdogTask() : Task(WATCHDOG_TASK_QUEUE_DEPTH_OBJS)
 {
+    heartbeatTimer = nullptr;
 }
 
 /**
@@ -65,8 +66,8 @@ void WatchdogTask::InitTask()
  */
 void WatchdogTask::HeartbeatFailureCallback(TimerHandle_t rtTimerHandle)
 {
-    Timer::DefaultCallback(rtTimerHandle);
-    PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
+   Timer::DefaultCallback(rtTimerHandle);
+   PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, RSC_ANY_TO_ABORT));
 }
 
 /**
@@ -78,6 +79,7 @@ void WatchdogTask::HandleCommand(Command& cm)
     switch (cm.GetCommand()) {
     case HEARTBEAT_COMMAND: {
         HandleHeartbeat(cm.GetTaskCommand());
+        break;
     }
     case TASK_SPECIFIC_COMMAND: {
         if(cm.GetTaskCommand() == HB_STATUS_SEND) {
@@ -103,7 +105,7 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
 {
     switch (taskCommand) {
     case RADIOHB_REQUEST:
-        SOAR_PRINT("HEARTBEAT RECEIVED \n");
+        // SOAR_PRINT("HEARTBEAT RECEIVED \n");
         heartbeatTimer->ResetTimerAndStart();
         break;
     case RADIOHB_DISABLED:
@@ -122,25 +124,17 @@ void WatchdogTask::HandleHeartbeat(uint16_t taskCommand)
  */
 void WatchdogTask::Run(void * pvParams)
 {
-    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless PBBControlTask is the HeartBeat task
+//    uint32_t tempSecondCounter = 0; // TODO: Temporary counter, would normally be in HeartBeat task or HID Task, unless FlightTask is the HeartBeat task
 
     heartbeatTimer = new Timer(HeartbeatFailureCallback);
     heartbeatTimer->ChangePeriodMs(HEARTBEAT_TIMER_PERIOD_MS);
     heartbeatTimer->Start();
 
     while (1) {
-        //Every cycle, print something out (for testing)
-        // ("PBBControlTask::Run() - [%d] Seconds\n", tempSecondCounter++);
-
         Command cm;
-
-        // Ingest the command queue, up to 5 commands
-        uint8_t proced = 0;
-        while (qEvtQueue->Receive(cm) && (proced < 5)) {
+        if (qEvtQueue->ReceiveWait(cm)) {
             HandleCommand(cm);
-            ++proced;
         }
-
     }
 }
 
@@ -167,8 +161,14 @@ static Proto::HeartbeatState::TimerState ConvertTimerStateToProto(TimerState ts)
  */
 void WatchdogTask::SendHeartbeatStatus()
 {
+    if (heartbeatTimer == nullptr) {
+        SOAR_PRINT("WatchdogTask - Heartbeat timer not initialized\n");
+        return;
+    }
+
     // Generate a PROTOBUF message and send it to the Protocol Task
     Proto::ControlMessage msg;
+    // TODO NEW NEED DIFF HBS FOR PBB AND FCB
     msg.set_source(Proto::Node::NODE_PBB);
     msg.set_target(Proto::Node::NODE_FSB);
     Proto::HeartbeatState hbs;

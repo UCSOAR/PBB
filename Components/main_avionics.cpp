@@ -31,7 +31,7 @@ namespace Driver
 void run_main()
 {
   // Init Tasks
-//  WatchdogTask::Inst().InitTask();
+  WatchdogTask::Inst().InitTask();
   UARTTask::Inst().InitTask();
   CubeTask::Inst().InitTask();
   DebugTask::Inst().InitTask();

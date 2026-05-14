@@ -380,6 +380,7 @@ Launch::Launch()
 RocketState Launch::OnEnter()
 {
     // Assert vent and drain closed
+	SOAR_PRINT("HELLO");
 
     // TODO NEW
     TimerTransitions::Inst().BurnSequence();

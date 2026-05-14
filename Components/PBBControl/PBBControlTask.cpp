@@ -74,7 +74,7 @@ void PBBControlTask::Run(void * pvParams)
 //	SPIFlash::Inst().Init();
 
     //Initialize the Timer Transitions
-    // TimerTransitions::Inst().Setup();
+     TimerTransitions::Inst().Setup();
 
     //Get the latest state from the system storage
     // TODO NEW
