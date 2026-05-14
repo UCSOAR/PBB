@@ -69,8 +69,8 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define DRAIN_EN_Pin GPIO_PIN_13
-#define DRAIN_EN_GPIO_Port GPIOC
+#define DRAIN_Pin GPIO_PIN_13
+#define DRAIN_GPIO_Port GPIOC
 #define DEBUG_SW_NRST_Pin GPIO_PIN_10
 #define DEBUG_SW_NRST_GPIO_Port GPIOG
 #define TC_FAULT2_OUT_N_Pin GPIO_PIN_0
@@ -105,10 +105,10 @@ void Error_Handler(void);
 #define I2C3_SDA_TEMP_GPIO_Port GPIOC
 #define SPI2_TC_CS3_N_Pin GPIO_PIN_9
 #define SPI2_TC_CS3_N_GPIO_Port GPIOA
-#define HEATER_ENABLE_Pin GPIO_PIN_4
-#define HEATER_ENABLE_GPIO_Port GPIOB
-#define MEV_ENABLE_Pin GPIO_PIN_5
-#define MEV_ENABLE_GPIO_Port GPIOB
+#define HEATER_Pin GPIO_PIN_4
+#define HEATER_GPIO_Port GPIOB
+#define MEV_Pin GPIO_PIN_5
+#define MEV_GPIO_Port GPIOB
 #define TC_FAULT3_OUT_N_Pin GPIO_PIN_6
 #define TC_FAULT3_OUT_N_GPIO_Port GPIOB
 #define TC_DRDY3_OUT_N_Pin GPIO_PIN_7

@@ -19,6 +19,7 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
+
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <RunInterface.hpp>
@@ -111,6 +112,10 @@ int main(void)
   /* USER CODE BEGIN 2 */
   __enable_irq();
 
+  run_interface();
+
+#if 0
+
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -124,11 +129,11 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
-  run_interface();
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
-#if 0
+
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 192);
@@ -559,19 +564,19 @@ static void MX_GPIO_Init(void)
   __HAL_RCC_GPIOD_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOC, DRAIN_EN_Pin|GPIO_PIN_2|SPI2_TC_CS2_N_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOC, DRAIN_Pin|GPIO_PIN_2|SPI2_TC_CS2_N_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOA, FLASH_RESET_Pin|QSPI_BK_NCS_Pin|SPI2_TC_CS3_N_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOB, TRANSCEIVER_DE_Pin|HEATER_ENABLE_Pin|MEV_ENABLE_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOB, TRANSCEIVER_DE_Pin|HEATER_Pin|MEV_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOE, TRANSCEIVER_RE_N_Pin|SPI2_TC_CS1_N_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pins : DRAIN_EN_Pin PC2 SPI2_TC_CS2_N_Pin */
-  GPIO_InitStruct.Pin = DRAIN_EN_Pin|GPIO_PIN_2|SPI2_TC_CS2_N_Pin;
+  /*Configure GPIO pins : DRAIN_Pin PC2 SPI2_TC_CS2_N_Pin */
+  GPIO_InitStruct.Pin = DRAIN_Pin|GPIO_PIN_2|SPI2_TC_CS2_N_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
@@ -596,8 +601,8 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : TRANSCEIVER_DE_Pin HEATER_ENABLE_Pin MEV_ENABLE_Pin */
-  GPIO_InitStruct.Pin = TRANSCEIVER_DE_Pin|HEATER_ENABLE_Pin|MEV_ENABLE_Pin;
+  /*Configure GPIO pins : TRANSCEIVER_DE_Pin HEATER_Pin MEV_Pin */
+  GPIO_InitStruct.Pin = TRANSCEIVER_DE_Pin|HEATER_Pin|MEV_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
