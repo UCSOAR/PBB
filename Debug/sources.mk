@@ -56,4 +56,5 @@ SoarCommunications/SoarProto \
 SoarOS/Core \
 SoarOS \
 SoarOS/Drivers \
+Drivers/STM32G4xx_HAL_Driver \
 

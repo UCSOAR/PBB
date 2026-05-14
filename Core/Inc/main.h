@@ -89,10 +89,10 @@ void Error_Handler(void);
 #define TC_DRDY1_OUT_N_GPIO_Port GPIOE
 #define TC_FAULT1_OUT_N_Pin GPIO_PIN_10
 #define TC_FAULT1_OUT_N_GPIO_Port GPIOE
-#define ADC1_IN7_Pin GPIO_PIN_12
-#define ADC1_IN7_GPIO_Port GPIOE
-#define ADC1_IN1_Pin GPIO_PIN_13
-#define ADC1_IN1_GPIO_Port GPIOE
+#define PT1_Pin GPIO_PIN_12
+#define PT1_GPIO_Port GPIOE
+#define PT2_Pin GPIO_PIN_13
+#define PT2_GPIO_Port GPIOE
 #define SPI2_TC_CS1_N_Pin GPIO_PIN_15
 #define SPI2_TC_CS1_N_GPIO_Port GPIOE
 #define SPI2_TC_SCK_Pin GPIO_PIN_13
