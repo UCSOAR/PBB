@@ -20,31 +20,29 @@ namespace GPIO
     namespace _MAIN_ENGINE_VALVE // Main engine valve GPIO Open/Close should ONLY be touched by MEVManager
     {
         inline void Open() {
-//        	HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_SET);
-        	}
+        	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_SET);
+		}
         inline void Close() {
-//        	HAL_GPIO_WritePin(LAUNCH_GPIO_Port, LAUNCH_Pin, GPIO_PIN_RESET);
+        	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_RESET);
         }
 
         inline bool IsOpen() {
-        	return false;
-//        	return HAL_GPIO_ReadPin(LAUNCH_GPIO_Port, LAUNCH_Pin) == GPIO_PIN_SET;
+        	return HAL_GPIO_ReadPin(MEV_GPIO_Port, MEV_Pin) == GPIO_PIN_SET;
         }
     }
 
 	namespace Drain
 	{
 		inline void Open() {
-//			HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_RESET);
+			HAL_GPIO_WritePin(DRAIN_GPIO_Port, DRAIN_Pin, GPIO_PIN_SET);
 		}
 
 		inline void Close() {
-//			HAL_GPIO_WritePin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin, GPIO_PIN_SET);
+			HAL_GPIO_WritePin(DRAIN_GPIO_Port, DRAIN_Pin, GPIO_PIN_RESET);
 		}
 
 		inline bool IsOpen() {
-			return false;
-//			return HAL_GPIO_ReadPin(DRAIN_CONTROL_GPIO_Port, DRAIN_CONTROL_Pin) == GPIO_PIN_RESET;
+			return HAL_GPIO_ReadPin(DRAIN_GPIO_Port, DRAIN_Pin) == GPIO_PIN_SET;
 		}
 	}	
 
