@@ -27,15 +27,27 @@
 constexpr UARTDriver *const DEFAULT_DEBUG_UART_DRIVER = UART::Debug; // UART Handle that ASSERT messages are sent over
 enum GLOBAL_COMMANDS : uint8_t
 {
-  COMMAND_NONE = 0,      // No command, packet can probably be ignored
-  TASK_SPECIFIC_COMMAND, // Runs a task specific command when given this object
-  DATA_COMMAND,          // Data command, used to send data to a task. Target is stored in taskCommand
+	COMMAND_NONE = 0,        // No command, packet can probably be ignored
+	TASK_SPECIFIC_COMMAND,    // Runs a task specific command when given this object
+	DATA_COMMAND,// Data command, used to send data to a task. Target is stored in taskCommand
+	CONTROL_ACTION,            // Control actions, used in Rocket State Machine, direct translation to RCU<->FCB Protocol
+	REQUEST_COMMAND,            // Request command
+	HEARTBEAT_COMMAND,            // Control actions for heartbeat commands
+	RADIOHB_CHANGE_PERIOD,
+	PROTOCOL_COMMAND,           // Protocol command, used for commands to the Protocol Task
+	DATA_BROKER_COMMAND,
+	GPS_COMMAND,
 };
 
 /* Cube++ Optional Code Configuration ------------------------------------------------------------------*/
 
 /* Task Parameter Definitions ------------------------------------------------------------------*/
 /* - Lower priority number means lower priority task ---------------------------------*/
+
+// FLIGHT PHASE
+constexpr uint8_t PBB_CONTROL_TASK_RTOS_PRIORITY = 2;            // Priority of the flight task
+constexpr uint8_t PBB_CONTROL_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the flight task queue
+constexpr uint16_t PBB_CONTROL_TASK_STACK_DEPTH_WORDS = 512;        // Size of the flight task stack
 
 // UART TASK
 constexpr uint8_t UART_TASK_RTOS_PRIORITY = 2;        // Priority of the uart task
@@ -47,11 +59,18 @@ constexpr uint8_t TASK_DEBUG_PRIORITY = 2;             // Priority of the debug 
 constexpr uint8_t TASK_DEBUG_QUEUE_DEPTH_OBJS = 10;    // Size of the debug task queue
 constexpr uint16_t TASK_DEBUG_STACK_DEPTH_WORDS = 512; // Size of the debug task stack
 
-
 // FLASH TASK
 constexpr uint8_t TASK_FLASH_TASK_PRIORITY = 2;             // Priority of the debug task
 constexpr uint8_t TASK_FLASH_QUEUE_DEPTH_OBJS = 10;    // Size of the debug task queue
 constexpr uint16_t TASK_FLASH_STACK_DEPTH_WORDS = 512; // Size of the debug task stack
+
+// WATCHDOG Task
+constexpr uint8_t WATCHDOG_TASK_RTOS_PRIORITY = 3;            // Priority of the watchdog task
+constexpr uint8_t WATCHDOG_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the watchdog task queue
+constexpr uint16_t WATCHDOG_TASK_STACK_DEPTH_WORDS = 512;        // Size of the watchdog task stack
+
+// RADIO PROTOCOL TASK
+constexpr uint8_t TASK_UART_PROTOCOL_PRIORITY = 4;
 
 
 #endif // CUBE_MAIN_SYSTEM_DEFINES_H

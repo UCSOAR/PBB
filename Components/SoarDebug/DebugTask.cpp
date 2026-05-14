@@ -15,7 +15,7 @@
 #include "UARTTask.hpp"
 
 // External Tasks (to send debug commands to)
-
+#include "PBBControl.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -93,6 +93,12 @@ void DebugTask::Run(void *pvParams)
 void DebugTask::HandleDebugMessage(const char *msg)
 {
   //-- FILESYSTEM COMMANDS --
+  if (strncmp(msg, "rsc ", 4) == 0) {
+		// Get parameter and send as a control action to flight task
+		int32_t state = ExtractIntParameter(msg, 4);
+		if (state != ERRVAL && state > 0 && state < UINT16_MAX)
+			PBBControl::Inst().SendCommand(Command(CONTROL_ACTION, state));
+	}
   if (strcmp(msg, "sysreset") == 0)
   {
     // Reset the system

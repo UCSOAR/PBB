@@ -12,6 +12,9 @@
 #include "CubeTask.hpp"
 #include "FlashTask.hpp"
 #include "UARTTask.hpp"
+#include "PBBControlTask.hpp"
+#include "UARTProtoTask.hpp"
+#include "WatchdogTask.hpp"
 /* Drivers ------------------------------------------------------------------*/
 namespace Driver
 {
@@ -28,11 +31,13 @@ namespace Driver
 void run_main()
 {
   // Init Tasks
+  WatchdogTask::Inst().InitTask();
   UARTTask::Inst().InitTask();
   CubeTask::Inst().InitTask();
   DebugTask::Inst().InitTask();
   FlashTask::Inst().InitTask();
-
+  PBBControlTask::Inst().InitTask();
+  UARTProtocolTask::Inst().InitTask();
 
   // Print System Boot Info : Warning, don't queue more than 10 prints before
   // scheduler starts

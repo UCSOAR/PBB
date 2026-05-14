@@ -19,9 +19,9 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "cmsis_os.h"
-
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <RunInterface.hpp>
 //#define USE_FULL_LL_DRIVER
 /* USER CODE END Includes */
 
@@ -81,7 +81,7 @@ void StartDefaultTask(void const * argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-
+//	SCB-> VTOR = FLASH_BASE;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -109,6 +109,7 @@ int main(void)
   MX_I2C3_Init();
   MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
+  __enable_irq();
 
   /* USER CODE END 2 */
 
@@ -123,11 +124,11 @@ int main(void)
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
   /* USER CODE END RTOS_TIMERS */
-
+  run_interface();
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
-
+#if 0
   /* Create the thread(s) */
   /* definition and creation of defaultTask */
   osThreadDef(defaultTask, StartDefaultTask, osPriorityNormal, 0, 192);
@@ -149,6 +150,7 @@ int main(void)
 
     /* USER CODE BEGIN 3 */
   }
+#endif
   /* USER CODE END 3 */
 }
 
