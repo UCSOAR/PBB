@@ -25,11 +25,11 @@ constexpr uint16_t FLIGHT_TASK_BOOTUP_TELE_CYCLES = 20;
 /************************************
  * TYPEDEFS
  ************************************/
-// enum FlightTaskRequests
-// {
-// 	FT_REQUEST_NONE = 0,
-// 	FT_REQUEST_TRANSMIT_STATE,	// Send the current state over the UART
-// };
+ enum FlightTaskRequests
+ {
+ 	FT_REQUEST_NONE = 0,
+ 	FT_REQUEST_TRANSMIT_STATE,	// Send the current state over the UART
+ };
 
 /************************************
  * CLASS DEFINITIONS

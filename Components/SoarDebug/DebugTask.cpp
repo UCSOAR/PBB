@@ -15,7 +15,7 @@
 #include "UARTTask.hpp"
 
 // External Tasks (to send debug commands to)
-#include "PBBControl.hpp"
+#include "PBBControlTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -97,9 +97,9 @@ void DebugTask::HandleDebugMessage(const char *msg)
 		// Get parameter and send as a control action to flight task
 		int32_t state = ExtractIntParameter(msg, 4);
 		if (state != ERRVAL && state > 0 && state < UINT16_MAX)
-			PBBControl::Inst().SendCommand(Command(CONTROL_ACTION, state));
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, state));
 	}
-  if (strcmp(msg, "sysreset") == 0)
+  else if (strcmp(msg, "sysreset") == 0)
   {
     // Reset the system
     SOAR_ASSERT(false, "System reset requested");

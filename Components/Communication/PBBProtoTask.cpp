@@ -9,7 +9,7 @@
  * INCLUDES
  ************************************/
 #include "PBBProtoTask.hpp"
-#include "ProtoTask.hpp"
+#include "PBBControlTask.hpp"
 #include "ReadBufferFixedSize.h"
 #include "WatchdogTask.hpp"
 

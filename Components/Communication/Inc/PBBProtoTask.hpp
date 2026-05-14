@@ -5,8 +5,8 @@
  *      Author: Andrey
  */
 
-#ifndef UARTPROTOTASK_HPP_
-#define UARTPROTOTASK_HPP_
+#ifndef PBBPROTOTASK_HPP_
+#define PBBPROTOTASK_HPP_
 
 /************************************
  * INCLUDES

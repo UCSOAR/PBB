@@ -15,7 +15,7 @@
 #include "Timer.hpp"
 #include "WatchdogTask.hpp"
 #include "PBBControlTask.hpp"
-#include "UARTProtoTask.hpp"
+#include "PBBProtoTask.hpp"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -180,5 +180,5 @@ void WatchdogTask::SendHeartbeatStatus()
     msg.serialize(writeBuffer);
 
     // Send the control message
-    UARTProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
+    PBBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }

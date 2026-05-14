@@ -1,5 +1,5 @@
 /*
- * ProtoTask.cpp
+ * PBBControlTask.cpp
  *
  *  Created on: May 13, 2026
  *      Author: Andrey
@@ -8,12 +8,12 @@
 /************************************
  * INCLUDES
  ************************************/
-//#include "ProtoTask.hpp"
-//#include "GPIO.hpp"
+#include "PBBControlTask.hpp"
+#include "GPIO.hpp"
 #include "SystemDefines.hpp"
-//#include "TimerTransitions.hpp"
 #include "PBBStateMachine.hpp"
-#include "UARTProtoTask.hpp"
+#include "PBBProtoTask.hpp"
+#include "TimerTransitions.hpp"
 
 // TODO NEW
 //#include "UARTProtocolTask.hpp"
@@ -38,7 +38,7 @@
 /**
  * @brief Constructor for PBBControlTask
  */
-PBBControlTask::PBBControlTask() : Task(PBBCONTROL_TASK_QUEUE_DEPTH_OBJS)
+PBBControlTask::PBBControlTask() : Task(PBB_CONTROL_TASK_QUEUE_DEPTH_OBJS)
 {
     rsm_ = nullptr;
     firstStateSent_ = 0;
@@ -55,9 +55,9 @@ void PBBControlTask::InitTask()
     BaseType_t rtValue =
         xTaskCreate((TaskFunction_t)PBBControlTask::RunTask,
             (const char*)"PBBControlTask",
-            (uint16_t)PBBCONTROL_TASK_STACK_DEPTH_WORDS,
+            (uint16_t)PBB_CONTROL_TASK_STACK_DEPTH_WORDS,
             (void*)this,
-            (UBaseType_t)PBBCONTROL_TASK_RTOS_PRIORITY,
+            (UBaseType_t)PBB_CONTROL_TASK_RTOS_PRIORITY,
             (TaskHandle_t*)&rtTaskHandle);
 
     SOAR_ASSERT(rtValue == pdPASS, "PBBControlTask::InitTask() - xTaskCreate() failed");
@@ -176,7 +176,7 @@ void PBBControlTask::SendRocketState()
    msg.serialize(writeBuffer);
 
    // Send the control message
-   UARTProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
+   PBBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_CONTROL);
 }
 
 

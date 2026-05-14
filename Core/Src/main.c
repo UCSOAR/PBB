@@ -81,7 +81,7 @@ void StartDefaultTask(void const * argument);
 int main(void)
 {
   /* USER CODE BEGIN 1 */
-//	SCB-> VTOR = FLASH_BASE;
+	SCB-> VTOR = FLASH_BASE;
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
