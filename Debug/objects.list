@@ -1,4 +1,5 @@
 "./Components/Communication/PBBProtoTask.o"
+"./Components/Communication/TelemetryTask.o"
 "./Components/FlightSafety/WatchdogTask.o"
 "./Components/LoggingModule/LoggingService.o"
 "./Components/PBBControl/PBBControlTask.o"

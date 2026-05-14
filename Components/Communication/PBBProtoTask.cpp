@@ -12,10 +12,10 @@
 #include "PBBControlTask.hpp"
 #include "ReadBufferFixedSize.h"
 #include "WatchdogTask.hpp"
+#include "TelemetryTask.hpp"
 
 // TODO NEW
 //#include "FlashTask.hpp"
-//#include "TelemetryTask.hpp"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -175,8 +175,7 @@ void PBBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         {
             uint32_t paramMs = msg.get_sys_ctrl().get_cmd_param();
             paramMs = (paramMs > 0xFFFF) ? 0xFFFE : paramMs;
-            // TODO NEW
-//          TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, paramMs));
+            TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, paramMs));
         }
     }
 }
