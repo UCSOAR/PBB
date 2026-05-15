@@ -59,8 +59,8 @@ void PBBProtocolTask::InitTask()
  */
 PBBProtocolTask::PBBProtocolTask() : ProtocolTask(
         Proto::Node::NODE_PBB,
-        UART::Debug,
-        UART_TASK_COMMAND_SEND_DEBUG)
+        UART::PBB,
+        UART_TASK_COMMAND_SEND_PBB)
 {
 }
 

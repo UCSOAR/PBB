@@ -103,6 +103,10 @@ void PBBControlTask::Run(void * pvParams)
 
     rsm_ = new RocketSM(RS_ABORT, true);
 
+    HAL_GPIO_WritePin(RS485_DE_GPIO_Port, RS485_DE_Pin, GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(RS485_RE_GPIO_Port, RS485_RE_Pin, GPIO_PIN_RESET);
+
+
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
@@ -154,7 +158,7 @@ void PBBControlTask::SendRocketState()
 {
     // For testing, generate a PROTOBUF message and send it to the Protocol Task
    Proto::ControlMessage msg;
-   msg.set_source(Proto::Node::NODE_FCB);
+   msg.set_source(Proto::Node::NODE_PBB);
    msg.set_target(Proto::Node::NODE_FSB);
    Proto::SystemState stateMsg;
    if(firstStateSent_ < FLIGHT_TASK_BOOTUP_TELE_CYCLES) {

@@ -24,7 +24,7 @@
 
 /* Cube++ Required Configuration ------------------------------------------------------------------*/
 #include "CubeDefines.hpp"
-constexpr UARTDriver *const DEFAULT_DEBUG_UART_DRIVER = UART::PBB; // UART Handle that ASSERT messages are sent over
+constexpr UARTDriver *const DEFAULT_DEBUG_UART_DRIVER = UART::Debug; // UART Handle that ASSERT messages are sent over
 enum GLOBAL_COMMANDS : uint8_t
 {
 	COMMAND_NONE = 0,        // No command, packet can probably be ignored

@@ -34,7 +34,7 @@ constexpr uint8_t DEBUG_TASK_PERIOD = 100;
  * @brief Constructor, sets all member variables
  */
 DebugTask::DebugTask()
-    : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::PBB)
+    : Task(TASK_DEBUG_QUEUE_DEPTH_OBJS), kUart_(UART::Debug)
 {
   memset(debugBuffer, 0, sizeof(debugBuffer));
   debugMsgIdx = 0;

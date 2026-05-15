@@ -120,14 +120,14 @@ void TelemetryTask::RunLogSequence()
     // Heartbeat Status (limited to every 2 seconds)
     if (++numNonControlLogs_ >= (TELEMETRY_HEARTBEAT_TIMER_PERIOD_MS / 4000)) {
         numNonControlLogs_ = 0;
-        WatchdogTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HB_STATUS_SEND));
+         WatchdogTask::Inst().SendCommand(Command(TASK_SPECIFIC_COMMAND, HB_STATUS_SEND));
     }
 
     // Other Sensors
     RequestSample();
     RequestTransmit();
 
-    SendDrainMEVStatus();
+     SendDrainMEVStatus();
 }
 
 /**
@@ -150,17 +150,17 @@ void TelemetryTask::RequestTransmit()
  */
 void TelemetryTask::SendDrainMEVStatus()
 {
-    Proto::TelemetryMessage teleMsg;
-    teleMsg.set_source(Proto::Node::NODE_PBB);
-    teleMsg.set_target(Proto::Node::NODE_FSB);
-    Proto::PbbControlStatus gpioMsg;
-    gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
-    gpioMsg.set_mev_open(GPIO::_MAIN_ENGINE_VALVE::IsOpen());
-    teleMsg.set_pbbControlStatus(gpioMsg);
+   Proto::TelemetryMessage teleMsg;
+   teleMsg.set_source(Proto::Node::NODE_PBB);
+   teleMsg.set_target(Proto::Node::NODE_FSB);
+   Proto::PbbControlStatus gpioMsg;
+   gpioMsg.set_drain_open(GPIO::Drain::IsOpen());
+   gpioMsg.set_mev_open(GPIO::_MAIN_ENGINE_VALVE::IsOpen());
+   teleMsg.set_pbbControlStatus(gpioMsg);
 
-    EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
-    teleMsg.serialize(writeBuffer);
+   EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
+   teleMsg.serialize(writeBuffer);
 
-    // Send the control message
-    PBBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
+   // Send the control message
+   PBBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
