@@ -59,8 +59,8 @@ void PBBProtocolTask::InitTask()
  */
 PBBProtocolTask::PBBProtocolTask() : ProtocolTask(
         Proto::Node::NODE_PBB,
-        UART::PBB,
-        UART_TASK_COMMAND_SEND_PBB)
+        UART::Debug,
+        UART_TASK_COMMAND_SEND_DEBUG)
 {
 }
 
@@ -77,47 +77,66 @@ void PBBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
         return;
 
     // If the message does not have a FCB command, do nothing
-    if (!msg.has_fcb_command())
-        return;
+//    if (!msg.has_pbb_command() && !msg.has_fcb_command())
+//        return;
 
     // SOAR_PRINT("PROTO-INFO: Received FCB Command Message\n");
+    if (msg.has_fcb_command()) {
+    	switch (msg.get_fcb_command().get_command_enum())
+		{
+		case Proto::FcbCommand::Command::RSC_ANY_TO_ABORT:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ANY_TO_ABORT));
+			break;
+		case Proto::FcbCommand::Command::RSC_GOTO_FILL:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_FILL));
+			break;
+		case Proto::FcbCommand::Command::RSC_ARM_CONFIRM_1:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_1));
+			break;
+		case Proto::FcbCommand::Command::RSC_ARM_CONFIRM_2:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_2));
+			break;
+		case Proto::FcbCommand::Command::RSC_GOTO_ARM:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_ARM));
+			break;
+		case Proto::FcbCommand::Command::RSC_GOTO_PRELAUNCH:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_PRELAUNCH));
+			break;
+		case Proto::FcbCommand::Command::RSC_IGNITION_TO_LAUNCH: // This is the ignition confirmation (we need a button to send this)
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_IGNITION_TO_LAUNCH));
+			break;
+		case Proto::FcbCommand::Command::RSC_GOTO_TEST:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_TEST));
+			break;
+		default:
+			break;
+		}
+    } else if (msg.has_pbb_command()) {
+    	switch (msg.get_pbb_command().get_command_enum())
+		{
+		case Proto::PbbCommand::Command::PBB_OPEN_MEV:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_TEST_MEV_OPEN));
+			break;
+		case Proto::PbbCommand::Command::PBB_CLOSE_MEV:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_MEV_CLOSE));
+			break;
+		case Proto::PbbCommand::Command::PBB_OPEN_DRAIN:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_OPEN_DRAIN));
+			break;
+		case Proto::PbbCommand::Command::PBB_CLOSE_DRAIN:
+			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_CLOSE_DRAIN));
+			break;
+		default:
+			break;
+		}
+    }
+    else {
+    	return;
+    }
+
 
     // Process the db command
-    switch (msg.get_fcb_command().get_command_enum())
-    {
-    case Proto::FcbCommand::Command::RSC_ANY_TO_ABORT:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ANY_TO_ABORT));
-        break;
-    case Proto::FcbCommand::Command::RSC_OPEN_VENT:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_OPEN_VENT));
-        break;
-    case Proto::FcbCommand::Command::RSC_CLOSE_VENT:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_CLOSE_VENT));
-        break;
-    case Proto::FcbCommand::Command::RSC_GOTO_FILL:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_FILL));
-        break;
-    case Proto::FcbCommand::Command::RSC_ARM_CONFIRM_1:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_1));
-        break;
-    case Proto::FcbCommand::Command::RSC_ARM_CONFIRM_2:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_ARM_CONFIRM_2));
-        break;
-    case Proto::FcbCommand::Command::RSC_GOTO_ARM:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_ARM));
-        break;
-    case Proto::FcbCommand::Command::RSC_GOTO_PRELAUNCH:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_PRELAUNCH));
-        break;
-    case Proto::FcbCommand::Command::RSC_IGNITION_TO_LAUNCH: // This is the ignition confirmation (we need a button to send this)
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_IGNITION_TO_LAUNCH));
-        break;
-    case Proto::FcbCommand::Command::RSC_GOTO_TEST:
-        PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_TEST));
-        break;
-    default:
-        break;
-    }
+
 
 }
 

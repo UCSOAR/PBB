@@ -154,7 +154,7 @@ void PBBControlTask::SendRocketState()
 {
     // For testing, generate a PROTOBUF message and send it to the Protocol Task
    Proto::ControlMessage msg;
-   msg.set_source(Proto::Node::NODE_PBB);
+   msg.set_source(Proto::Node::NODE_FCB);
    msg.set_target(Proto::Node::NODE_FSB);
    Proto::SystemState stateMsg;
    if(firstStateSent_ < FLIGHT_TASK_BOOTUP_TELE_CYCLES) {
