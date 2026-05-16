@@ -8,6 +8,7 @@
 "./Components/PBBControl/TimerTransitions.o"
 "./Components/RunInterface.o"
 "./Components/main_avionics.o"
+"./Components/Sensors/PressureTransducerTask.o"
 "./Components/SoarDebug/DebugTask.o"
 "./Core/Src/app_freertos.o"
 "./Core/Src/main.o"

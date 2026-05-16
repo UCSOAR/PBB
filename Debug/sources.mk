@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
+# Toolchain: GNU Tools for STM32 (14.3.rel1)
 ################################################################################
 
 C++M_SRCS := 
@@ -43,6 +43,7 @@ Components/FlightSafety \
 Components/LoggingModule \
 Components/PBBControl \
 Components \
+Components/Sensors \
 Components/SoarDebug \
 Core/Src \
 Core/Startup \

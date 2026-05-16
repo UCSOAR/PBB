@@ -16,6 +16,7 @@
 
 // External Tasks (to send debug commands to)
 #include "PBBControlTask.hpp"
+#include "PressureTransducerTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -98,6 +99,11 @@ void DebugTask::HandleDebugMessage(const char *msg)
 		int32_t state = ExtractIntParameter(msg, 4);
 		if (state != ERRVAL && state > 0 && state < UINT16_MAX)
 			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, state));
+	}
+  else if (strcmp(msg, "ptc") == 0) {
+		SOAR_PRINT("Debug 'Pressure Transducer' Sample and Output Received\n");
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_NEW_SAMPLE));
+		PressureTransducerTask::Inst().SendCommand(Command(REQUEST_COMMAND, PT_REQUEST_DEBUG));
 	}
   else if (strcmp(msg, "sysreset") == 0)
   {

@@ -143,7 +143,8 @@ void PBBControlTask::HandleCommand(Command& cm)
 {
     // If this is a request command, we handle it in the task (rocket state command must always be control actions)
     if (cm.GetCommand() == REQUEST_COMMAND && cm.GetTaskCommand() == FT_REQUEST_TRANSMIT_STATE)
-        SendRocketState();
+        // SendRocketState();
+    	return;
     else
         rsm_->HandleCommand(cm);
 

@@ -78,5 +78,11 @@ constexpr uint8_t TELEMETRY_TASK_RTOS_PRIORITY = 3;            // Priority of th
 constexpr uint8_t TELEMETRY_TASK_QUEUE_DEPTH_OBJS = 10;        // Size of the telemetry task queue
 constexpr uint16_t TELEMETRY_TASK_STACK_DEPTH_WORDS = 512;        // Size of the telemetry task stack
 
+// PRESSURE TRANSDUCER TASK
+constexpr uint8_t TASK_PRESSURE_TRANSDUCER_PRIORITY = 1;			// Priority of the pressure transducer task
+constexpr uint8_t TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
+constexpr uint16_t TASK_PRESSURE_TRANSDUCER_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
+
+
 
 #endif // CUBE_MAIN_SYSTEM_DEFINES_H

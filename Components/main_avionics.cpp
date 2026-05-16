@@ -16,6 +16,7 @@
 #include "PBBProtoTask.hpp"
 #include "WatchdogTask.hpp"
 #include "TelemetryTask.hpp"
+#include "PressureTransducerTask.hpp"
 
 /* Drivers ------------------------------------------------------------------*/
 namespace Driver
@@ -41,6 +42,7 @@ void run_main()
   PBBControlTask::Inst().InitTask();
   PBBProtocolTask::Inst().InitTask();
   TelemetryTask::Inst().InitTask();
+  PressureTransducerTask::Inst().InitTask();
 
   // Print System Boot Info : Warning, don't queue more than 10 prints before
   // scheduler starts
