@@ -141,7 +141,7 @@ void ADC_Select_CH3 (void)
 	ADC_ChannelConfTypeDef sConfig = {0};
 	sConfig.Channel = ADC_CHANNEL_3;
 	  sConfig.Rank = ADC_REGULAR_RANK_1;
-	  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+	  sConfig.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
 	  sConfig.SingleDiff = ADC_SINGLE_ENDED;
 	  sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	  sConfig.Offset = 0;
@@ -158,7 +158,7 @@ void ADC_Select_CH16 (void)
 	  */
 	  sConfig.Channel = ADC_CHANNEL_16;
 	  sConfig.Rank = ADC_REGULAR_RANK_1;
-	  sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
+	  sConfig.SamplingTime = ADC_SAMPLETIME_247CYCLES_5;
 	  sConfig.SingleDiff = ADC_SINGLE_ENDED;
 	  sConfig.OffsetNumber = ADC_OFFSET_NONE;
 	  sConfig.Offset = 0;
@@ -170,42 +170,120 @@ void ADC_Select_CH16 (void)
 
 void PressureTransducerTask::SamplePressureTransducer()
 {
-	static const int PT_VOLTAGE_ADC_POLL_TIMEOUT = 50;
-	static const double PRESSURE_SCALE = 1.5220883534136546; // Value to scale to original voltage value
-	double adcVal[2] = {};
-	double pressureTransducerValue1 = 0;
-	double pressureTransducerValue2 = 0;
-	double vi = 0;
+    static const int PT_VOLTAGE_ADC_POLL_TIMEOUT = 50;
+    static const double PRESSURE_SCALE = 1.5220883534136546;
 
-	/* Functions -----------------------------------------------------------------*/
-	ADC_Select_CH3();
-	HAL_ADC_Start(&hadc3);  // Enables ADC and starts conversion of regular channels
-	if(HAL_ADC_PollForConversion(&hadc3, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK) { //Check if conversion is completed
-		adcVal[0] = HAL_ADC_GetValue(&hadc3); // Get ADC Value
-		HAL_ADC_Stop(&hadc3);
-		}
-	ADC_Select_CH16();
-		HAL_ADC_Start(&hadc3);  // Enables ADC and starts conversion of regular channels
-		if(HAL_ADC_PollForConversion(&hadc3, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK) { //Check if conversion is completed
-			adcVal[1] = HAL_ADC_GetValue(&hadc3); // Get ADC Value
-			HAL_ADC_Stop(&hadc3);
-			}
-	vi = ((3.3/4095) * (adcVal[0])); // Converts 12 bit ADC value into voltage
-	pressureTransducerValue1 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000; // Multiply by 1000 to keep decimal places
-	data->pressure_1 = (int32_t) pressureTransducerValue1; // Pressure in PSI
-	vi = ((3.3/4095) * (adcVal[1])); // Converts 12 bit ADC value into voltage
-		pressureTransducerValue2 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000; // Multiply by 1000 to keep decimal places
-		data->pressure_2 = (int32_t) pressureTransducerValue2; // Pressure in PSI
-	timestampPT = HAL_GetTick();
+    static bool adc3Calibrated = false;
+
+    double adcVal[2] = {};
+    double pressureTransducerValue1 = 0;
+    double pressureTransducerValue2 = 0;
+    double vi = 0;
+
+    /* Calibrate ADC once before conversions */
+    if (!adc3Calibrated)
+    {
+        HAL_ADC_Stop(&hadc3);
+
+        if (HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED) != HAL_OK)
+        {
+            Error_Handler();
+        }
+
+        adc3Calibrated = true;
+    }
+
+    /* ---------------- CH3 ---------------- */
+
+    ADC_Select_CH3();
+
+    // Dummy conversion after switching channel
+    if (HAL_ADC_Start(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_ADC_PollForConversion(&hadc3, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK)
+    {
+        (void)HAL_ADC_GetValue(&hadc3);   // discard
+    }
+
+    if (HAL_ADC_Stop(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    // Real conversion
+    if (HAL_ADC_Start(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_ADC_PollForConversion(&hadc3, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK)
+    {
+        adcVal[0] = HAL_ADC_GetValue(&hadc3);
+    }
+
+    if (HAL_ADC_Stop(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /* ---------------- CH16 ---------------- */
+
+    ADC_Select_CH16();
+
+    // Dummy conversion after switching channel
+    if (HAL_ADC_Start(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_ADC_PollForConversion(&hadc3, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK)
+    {
+        (void)HAL_ADC_GetValue(&hadc3);   // discard
+    }
+
+    if (HAL_ADC_Stop(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    // Real conversion
+    if (HAL_ADC_Start(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    if (HAL_ADC_PollForConversion(&hadc3, PT_VOLTAGE_ADC_POLL_TIMEOUT) == HAL_OK)
+    {
+        adcVal[1] = HAL_ADC_GetValue(&hadc3);
+    }
+
+    if (HAL_ADC_Stop(&hadc3) != HAL_OK)
+    {
+        Error_Handler();
+    }
+
+    /* ---------------- Convert ADC to pressure ---------------- */
+
+    vi = ((3.3 / 4095.0) * adcVal[0]);
+    pressureTransducerValue1 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000;
+    data->pressure_1 = (int32_t)pressureTransducerValue1;
+
+    vi = ((3.3 / 4095.0) * adcVal[1]);
+    pressureTransducerValue2 = (250 * (vi * PRESSURE_SCALE) - 125) * 1000;
+    data->pressure_2 = (int32_t)pressureTransducerValue2;
+
+    timestampPT = HAL_GetTick();
 }
-
 
 /**
  * @brief Transmits a protocol barometer data sample
  */
 void PressureTransducerTask::TransmitProtocolPressureData()
 {
-    SOAR_PRINT("Pressure Transducer Transmit...\n");
+    // SOAR_PRINT("Pressure Transducer Transmit...\n");
 
     Proto::TelemetryMessage msg;
 	msg.set_source(Proto::Node::NODE_PBB);

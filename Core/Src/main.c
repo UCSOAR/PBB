@@ -114,6 +114,7 @@ int main(void)
   MX_SPI2_Init();
   MX_ADC3_Init();
   /* USER CODE BEGIN 2 */
+//  HAL_ADCEx_Calibration_Start(&hadc3, ADC_SINGLE_ENDED);
   __enable_irq();
 
   run_interface();
@@ -224,7 +225,7 @@ static void MX_ADC3_Init(void)
   /** Common config
   */
   hadc3.Instance = ADC3;
-  hadc3.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV2;
+  hadc3.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
   hadc3.Init.Resolution = ADC_RESOLUTION_12B;
   hadc3.Init.DataAlign = ADC_DATAALIGN_RIGHT;
   hadc3.Init.GainCompensation = 0;
