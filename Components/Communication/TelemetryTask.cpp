@@ -82,7 +82,7 @@ void TelemetryTask::Run(void * pvParams)
 		while (qEvtQueue->Receive(cm))
 			HandleCommand(cm);
 
-        osDelay(2000);
+        osDelay(1000);
         RunLogSequence();
     }
 }
