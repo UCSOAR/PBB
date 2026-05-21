@@ -17,6 +17,7 @@
 // External Tasks (to send debug commands to)
 #include "PBBControlTask.hpp"
 #include "PressureTransducerTask.hpp"
+#include "GPIO.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -120,7 +121,24 @@ void DebugTask::HandleDebugMessage(const char *msg)
     SOAR_PRINT("Debug Task Runtime  \t: %d ms\n\n",
                TICKS_TO_MS(xTaskGetTickCount()));
   }
-  else
+	else if (strcmp(msg, "dopen") == 0)
+	{
+ 		GPIO::Drain::Open();
+	}
+	else if (strcmp(msg, "dclose") == 0)
+	{
+		GPIO::Drain::Close();
+	}
+	else if (strcmp(msg, "mevopen") == 0)
+	{
+		GPIO::_MAIN_ENGINE_VALVE::Open();
+	}
+	else if (strcmp(msg, "mevclose") == 0)
+	{
+		GPIO::_MAIN_ENGINE_VALVE::Close();
+	}
+
+	else
   {
     // Single character command, or unknown command
     switch (msg[0])
