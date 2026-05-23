@@ -17,6 +17,7 @@
 #include "WatchdogTask.hpp"
 #include "TelemetryTask.hpp"
 #include "PressureTransducerTask.hpp"
+#include "TCTask.hpp"
 
 /* Drivers ------------------------------------------------------------------*/
 namespace Driver
@@ -43,6 +44,7 @@ void run_main()
   PBBProtocolTask::Inst().InitTask();
   TelemetryTask::Inst().InitTask();
   PressureTransducerTask::Inst().InitTask();
+  TCTask::Inst().InitTask();
 
   // Print System Boot Info : Warning, don't queue more than 10 prints before
   // scheduler starts

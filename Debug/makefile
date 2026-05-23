@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
+# Toolchain: GNU Tools for STM32 (14.3.rel1)
 ################################################################################
 
 -include ../makefile.init
@@ -12,6 +12,9 @@ RM := rm -rf
 -include SoarOS/Drivers/subdir.mk
 -include SoarOS/Core/subdir.mk
 -include SoarOS/subdir.mk
+-include SoarDrivers/MAX31856/subdir.mk
+-include SoarDrivers/.metadata/.plugins/org.eclipse.cdt.managedbuilder.core/subdir.mk
+-include SoarDrivers/.metadata/.plugins/org.eclipse.cdt.make.core/subdir.mk
 -include SoarCommunications/SoarProto/EmbeddedProto/src/subdir.mk
 -include SoarCommunications/SoarProto/subdir.mk
 -include Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang/subdir.mk
@@ -100,8 +103,8 @@ all: main-build
 main-build: PBB secondary-outputs
 
 # Tool invocations
-PBB PBB.map: $(OBJS) $(USER_OBJS) C:\Users\shiva\Documents\SOAR\Software\Aegis\PBB\STM32G491MESX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "PBB" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\shiva\Documents\SOAR\Software\Aegis\PBB\STM32G491MESX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PBB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+PBB PBB.map: $(OBJS) $(USER_OBJS) C:\Users\Local\ user\Desktop\soar\ stuff\its\ time\ its\ time\ its\ time\PBB\STM32G491MESX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "PBB" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Local user\Desktop\soar stuff\its time its time its time\PBB\STM32G491MESX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PBB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

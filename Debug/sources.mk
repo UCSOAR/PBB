@@ -1,6 +1,6 @@
 ################################################################################
 # Automatically-generated file. Do not edit!
-# Toolchain: GNU Tools for STM32 (13.3.rel1)
+# Toolchain: GNU Tools for STM32 (14.3.rel1)
 ################################################################################
 
 C++M_SRCS := 
@@ -54,6 +54,9 @@ Middlewares/Third_Party/FreeRTOS/Source/portable/GCC/ARM_CM4F \
 Middlewares/Third_Party/FreeRTOS/Source/portable/MemMang \
 SoarCommunications/SoarProto/EmbeddedProto/src \
 SoarCommunications/SoarProto \
+SoarDrivers/.metadata/.plugins/org.eclipse.cdt.make.core \
+SoarDrivers/.metadata/.plugins/org.eclipse.cdt.managedbuilder.core \
+SoarDrivers/MAX31856 \
 SoarOS/Core \
 SoarOS \
 SoarOS/Drivers \
