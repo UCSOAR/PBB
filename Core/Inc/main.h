@@ -26,6 +26,8 @@
 extern "C" {
 #endif
 
+
+
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal.h"
 
@@ -43,7 +45,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define IS_PBB
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
