@@ -5,6 +5,7 @@
 "./Components/PBBControl/PBBControlTask.o"
 "./Components/PBBControl/PBBStateMachine.o"
 "./Components/PBBControl/PBBStates.o"
+"./Components/PBBControl/PropValveManager.o"
 "./Components/PBBControl/TimerTransitions.o"
 "./Components/RunInterface.o"
 "./Components/main_avionics.o"

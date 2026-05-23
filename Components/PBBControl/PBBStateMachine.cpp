@@ -13,6 +13,7 @@
 #include "PBBStateMachine.hpp"
 #include "PBBStates.hpp"
 #include "SystemDefines.hpp"
+#include "PropValveManager.h"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -57,6 +58,7 @@ RocketSM::RocketSM(RocketState startingState, bool enterStartingState)
 //    }
 
     rs_currentState = stateArray[startingState];
+    PropValveManager::Inst().OnStateChange(rs_currentState->GetStateID());
 
     // If we need to run OnEnter for the starting state, do so
     if (enterStartingState) {
@@ -94,8 +96,7 @@ RocketState RocketSM::TransitionState(RocketState nextState)
     // Assert the next state is initalized
     SOAR_ASSERT(rs_currentState != nullptr, "rs_currentState is nullptr in TransitionState");
 
-    // TODO NEW
-    //    HDITask::Inst().SendCommand(Command(REQUEST_COMMAND, rs_currentState->GetStateID()));
+    PropValveManager::Inst().OnStateChange(rs_currentState->GetStateID());
 
     // Enter the current state
     rs_currentState->OnEnter();

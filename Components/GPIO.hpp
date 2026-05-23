@@ -33,6 +33,7 @@ namespace GPIO
 
 	namespace Drain
 	{
+		//TODO: LastTask Drain invalid while MEV SOL
 		inline void Open() {
 			HAL_GPIO_WritePin(DRAIN_GPIO_Port, DRAIN_Pin, GPIO_PIN_SET);
 		}
