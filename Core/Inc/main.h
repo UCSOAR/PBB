@@ -22,9 +22,13 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
+#define IS_PBB
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+
 
 /* Includes ------------------------------------------------------------------*/
 #include "stm32g4xx_hal.h"
