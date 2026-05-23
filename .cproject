@@ -231,14 +231,17 @@
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec.1275249556" name="MCU Output Converter Motorola S-rec with symbols" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.objcopy.symbolsrec"/>
 						</toolChain>
 					</folderInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1952148787.749837286" name="PollingTask.cpp" rcbsApplicability="disable" resourcePath="SoarDrivers/PollingTask.cpp" toolsToInvoke="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.1371011403.356365087">
+						<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.1371011403.356365087" name="MCU/MPU G++ Compiler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.cpp.compiler.1371011403"/>
+					</fileInfo>
+					<fileInfo id="com.st.stm32cube.ide.mcu.gnu.managedbuild.config.exe.debug.1952148787.2046995288" name="PollingTask.hpp" rcbsApplicability="disable" resourcePath="SoarDrivers/PollingTask.hpp" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry excluding="Flash" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Components"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
 						<entry excluding="CMSIS/RTOS|CMSIS/NN|CMSIS/DSP|CMSIS/Core/Template" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry excluding="CanAutoNode|SoarProto/EmbeddedProto/test" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SoarCommunications"/>
-						<entry excluding="MAX31856" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SoarDrivers"/>
-						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SoarDrivers/MAX31856"/>
+						<entry excluding="PollingTask.cpp|PollingTask.hpp|AirbrakesDriver|W25NDriver|TMUX1104 Driver|NAU7802|MX66L1G45GMI|MS5611Driver|MS5607Driver|MMC5983MA_SPI|MAX7456|LSM6DSODriver|IMU32|GPS|FDCanH7|FDCanG4" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SoarDrivers"/>
 						<entry excluding="Profiler" flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="SoarOS"/>
 					</sourceEntries>
 				</configuration>
