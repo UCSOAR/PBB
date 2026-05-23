@@ -22,8 +22,6 @@
 #ifndef __MAIN_H
 #define __MAIN_H
 
-#define IS_PBB
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -47,7 +45,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#define IS_PBB
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
