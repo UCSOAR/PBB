@@ -14,16 +14,24 @@
 #include "SystemDefines.hpp"
 #include "main.h"
 #include "stm32g4xx_hal.h"
+#include "solstates.hpp"
 
 namespace GPIO
 {
+
     namespace _MAIN_ENGINE_VALVE
     {
+
         inline void Open() {
+        	if(!drainopen) {
         	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_SET);
+        	SOAR_PRINT("opening mev\n");
+        	mevopen = true;
+        	}
 		}
         inline void Close() {
         	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_RESET);
+        	mevopen = false;
         }
 
         inline bool IsOpen() {
@@ -34,11 +42,16 @@ namespace GPIO
 	namespace Drain
 	{
 		inline void Open() {
+			if(!mevopen) {
 			HAL_GPIO_WritePin(DRAIN_GPIO_Port, DRAIN_Pin, GPIO_PIN_SET);
+			SOAR_PRINT("opening drain\n");
+			drainopen = true;
+			}
 		}
 
 		inline void Close() {
 			HAL_GPIO_WritePin(DRAIN_GPIO_Port, DRAIN_Pin, GPIO_PIN_RESET);
+			drainopen = false;
 		}
 
 		inline bool IsOpen() {
