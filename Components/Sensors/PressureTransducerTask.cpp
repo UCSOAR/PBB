@@ -38,7 +38,7 @@
  */
 PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS)
 {
-    data = (PressureTransducerData*)soar_malloc(sizeof(PressureTransducerData));
+    data = (PBBPressureTransducerData*)soar_malloc(sizeof(PBBPressureTransducerData));
 }
 
 /**

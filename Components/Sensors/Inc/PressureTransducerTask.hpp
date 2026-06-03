@@ -15,6 +15,7 @@
  ************************************/
 #include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "SensorDataTypes.hpp"
 
 /************************************
  * MACROS AND DEFINES
@@ -29,11 +30,7 @@ enum PT_TASK_COMMANDS {
 /************************************
  * TYPEDEFS
  ************************************/
-typedef struct
-{
-    int32_t     pressure_1;
-    int32_t     pressure_2;
-} PressureTransducerData;
+
 
 //ADC Handles
 extern ADC_HandleTypeDef hadc3;      // ADC1 - PT1
@@ -64,7 +61,7 @@ protected:
     void TransmitProtocolPressureData();
 
     // Data
-    PressureTransducerData* data;
+    PBBPressureTransducerData* data;
     uint32_t timestampPT;
 
 private:

@@ -18,6 +18,7 @@
 #include "TelemetryTask.hpp"
 #include "PressureTransducerTask.hpp"
 #include "TCTask.hpp"
+#include "ActualLoggingTask.hpp"
 
 /* Drivers ------------------------------------------------------------------*/
 namespace Driver
@@ -45,6 +46,7 @@ void run_main()
   TelemetryTask::Inst().InitTask();
   PressureTransducerTask::Inst().InitTask();
   TCTask::Inst().InitTask();
+  //ActualLoggingTask::Inst().InitTask();
 
   // Print System Boot Info : Warning, don't queue more than 10 prints before
   // scheduler starts

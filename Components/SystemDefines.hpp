@@ -87,5 +87,10 @@ constexpr uint8_t TASK_TC_PRIORITY = 1;			// Priority of the pressure transducer
 constexpr uint8_t TASK_TC_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
 constexpr uint16_t TASK_TC_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
 
+constexpr uint8_t TASK_LOGGING_PRIORITY = 1;			// Priority of the pressure transducer task
+constexpr uint8_t TASK_LOGGING_QUEUE_DEPTH_OBJS = 10;		// Size of the pressure transducer task queue
+constexpr uint16_t TASK_LOGGING_STACK_DEPTH_WORDS = 512;		// Size of the pressure transducer task stack
+
+
 
 #endif // CUBE_MAIN_SYSTEM_DEFINES_H
