@@ -1,5 +1,5 @@
 # Ignore Build folders
-Debug/
+Debug/*
 Release/
 **/Debug/
 **/Release/
@@ -39,3 +39,12 @@ Release/
 .DS_Store
 Thumbs.db
 *.swp
+
+# IDE
+.metadata
+.settings
+[Rr]elease
+[Dd]ebug
+*.launch
+Application/
+Debug/
