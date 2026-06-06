@@ -17,6 +17,7 @@
 #include <time.h>
 #include "PBBProtoTask.hpp"
 #include "CubeUtils.hpp"
+#include "DataBroker.hpp"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -39,6 +40,7 @@
 PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS)
 {
     data = (PBBPressureTransducerData*)soar_malloc(sizeof(PBBPressureTransducerData));
+	bigdump = (PBBPressureTransducerData*)soar_malloc(sizeof(PBBPressureTransducerData)*BIGDUMPSIZE);
 }
 
 /**
@@ -68,15 +70,53 @@ void PressureTransducerTask::InitTask()
  */
 void PressureTransducerTask::Run(void * pvParams)
 {
-    while (1) {
-        Command cm;
+	uint32_t last = 0;
+	bool reporteddumpstat = false;
+	while (1) {
+		Command cm;
 
-        //Wait forever for a command
-        qEvtQueue->ReceiveWait(cm);
+		//Wait forever for a command
+		bool res = qEvtQueue->Receive(cm);
 
-        //Process the command
-        HandleCommand(cm);
-    }
+		//Process the command
+		if(res)
+			HandleCommand(cm);
+
+		uint32_t th = HAL_GetTick();
+
+		if(th - last > ticksPerFlashLog && ticksPerFlashLog != 0) {
+			SamplePressureTransducer();
+			if(ticksPerFlashLog < 3 && bigdumpi < BIGDUMPSIZE) {
+				bigdump[bigdumpi++] = *data;
+				if(!reporteddumpstat) {
+					SOAR_PRINT("we have switched to big dump, starting at %d!\n",bigdumpi);
+					reporteddumpstat = true;
+				}
+			} else {
+				DataBroker::Publish<PBBPressureTransducerData>(data);
+			}
+
+			last = th;
+		}
+
+		if(bigdumpi > 0 && ticksPerFlashLog >= 3) {
+			for(uint16_t i = 0; i < 1; i++) {
+				DataBroker::Publish<PBBPressureTransducerData>(&bigdump[--bigdumpi]);
+				if(bigdumpi == 0) {
+					SOAR_PRINT("done catching up!\n");
+					break;
+				}
+			}
+			if(reporteddumpstat) {
+				SOAR_PRINT("catching up... (%d)\n",bigdumpi);
+				reporteddumpstat = false;
+			}
+
+		}
+
+		//        SamplePressureTransducer();
+		//        osDelay(500);
+	}
 }
 
 /**
@@ -93,9 +133,13 @@ void PressureTransducerTask::HandleCommand(Command& cm)
     case REQUEST_COMMAND: {
         HandleRequestCommand(cm.GetTaskCommand());
     }
-    case TASK_SPECIFIC_COMMAND: {
-        break;
-    }
+	case TASK_SPECIFIC_COMMAND: {
+		if(cm.GetTaskCommand() == PT_SET_FLASH_RATE) {
+			ticksPerFlashLog = *(uint32_t*)cm.GetDataPointer();
+			SOAR_PRINT("pt rate %d\n",ticksPerFlashLog);
+		}
+		break;
+	}
     default:
         SOAR_PRINT("PressureTransducerTask - Received Unsupported Command {%d}\n", cm.GetCommand());
         break;

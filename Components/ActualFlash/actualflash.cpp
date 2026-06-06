@@ -58,8 +58,8 @@ bool MX66L1G45G::ReadID(uint8_t* manufacturerID, uint16_t* deviceID) {
     sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
     sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    if (HAL_QSPI_Command(hqspi_, &sCommand, 5000) != HAL_OK) return false;
-    if (HAL_QSPI_Receive(hqspi_, idData, 5000) != HAL_OK) return false;
+    if (HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
+    if (HAL_QSPI_Receive(hqspi_, idData, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
 
     *manufacturerID = idData[0];
     *deviceID = (idData[1] << 8) | idData[2];
@@ -80,7 +80,7 @@ bool MX66L1G45G::WriteEnable() {
     sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
     sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    return HAL_QSPI_Command(hqspi_, &sCommand, 5000) == HAL_OK;
+    return HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) == HAL_OK;
 }
 
 bool MX66L1G45G::WaitForReady(uint32_t timeout) {
@@ -123,8 +123,8 @@ bool MX66L1G45G::EnableQuadMode() {
     sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
     sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    if (HAL_QSPI_Command(hqspi_, &sCommand, 5000) != HAL_OK) return false;
-    if (HAL_QSPI_Receive(hqspi_, &statusReg, 5000) != HAL_OK) return false;
+    if (HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
+    if (HAL_QSPI_Receive(hqspi_, &statusReg, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
 
     // Bit 6 is QE (Quad Enable) on Macronix
     if ((statusReg & 0x40) != 0) return true; // Already enabled
@@ -136,8 +136,8 @@ bool MX66L1G45G::EnableQuadMode() {
 
     // 3. Write Status Register
     sCommand.Instruction       = CMD_WRITE_STATUS_REG;
-    if (HAL_QSPI_Command(hqspi_, &sCommand, 5000) != HAL_OK) return false;
-    if (HAL_QSPI_Transmit(hqspi_, &statusReg, 5000) != HAL_OK) return false;
+    if (HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
+    if (HAL_QSPI_Transmit(hqspi_, &statusReg, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
 
     return WaitForReady();
 }
@@ -159,7 +159,7 @@ bool MX66L1G45G::EraseSector(uint32_t address) {
     sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
     sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    if (HAL_QSPI_Command(hqspi_, &sCommand, 5000) != HAL_OK) return false;
+    if (HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
 
     return WaitForReady();
 }
@@ -183,8 +183,8 @@ bool MX66L1G45G::WritePage(uint32_t address, const uint8_t* data, uint32_t size)
     sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
     sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    if (HAL_QSPI_Command(hqspi_, &sCommand, 5000) != HAL_OK) return false;
-    if (HAL_QSPI_Transmit(hqspi_, (uint8_t*)data, 5000) != HAL_OK) return false;
+    if (HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
+    if (HAL_QSPI_Transmit(hqspi_, (uint8_t*)data, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
 
     return WaitForReady();
 }
@@ -207,8 +207,8 @@ bool MX66L1G45G::ReadData(uint32_t address, uint8_t* data, uint32_t size) {
     sCommand.DdrHoldHalfCycle  = QSPI_DDR_HHC_ANALOG_DELAY;
     sCommand.SIOOMode          = QSPI_SIOO_INST_EVERY_CMD;
 
-    if (HAL_QSPI_Command(hqspi_, &sCommand, 5000) != HAL_OK) return false;
-    if (HAL_QSPI_Receive(hqspi_, data, 5000) != HAL_OK) return false;
+    if (HAL_QSPI_Command(hqspi_, &sCommand, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
+    if (HAL_QSPI_Receive(hqspi_, data, HAL_QSPI_TIMEOUT_DEFAULT_VALUE) != HAL_OK) return false;
 
     return true;
 }

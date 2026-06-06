@@ -148,11 +148,14 @@ public:
 
     virtual RocketState GetStateID() { return rsStateID; }
 
+    uint16_t GetTicksPerFlashLog() const {return ticksPerFlashLog;}
+
     static const char* StateToString(RocketState stateId);
 
     //RocketState HandleGeneralStateCommands(RocketControlCommands rcAction);
 protected:
     RocketState rsStateID = RS_NONE;    //The name of the state we're in
+    uint16_t ticksPerFlashLog = 0;
 };
 
 /**

@@ -20,11 +20,14 @@
 /************************************
  * MACROS AND DEFINES
  ************************************/
+#define BIGDUMPSIZE 1000
+
 enum PT_TASK_COMMANDS {
     PT_NONE = 0,
     PT_REQUEST_NEW_SAMPLE,// Get a new pressure transducer sample, task will be blocked for polling time
     PT_REQUEST_TRANSMIT,    // Send the current pressure transducer data over the Radio
     PT_REQUEST_DEBUG,        // Send the current pressure transducer data over the Debug UART
+	PT_SET_FLASH_RATE
 };
 
 /************************************
@@ -63,6 +66,10 @@ protected:
     // Data
     PBBPressureTransducerData* data;
     uint32_t timestampPT;
+
+    uint32_t ticksPerFlashLog = 0;
+    uint32_t bigdumpi = 0;
+    PBBPressureTransducerData* bigdump;
 
 private:
     PressureTransducerTask();                                        // Private constructor

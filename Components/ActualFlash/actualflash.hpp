@@ -11,7 +11,7 @@
 #define ACTUALFLASH_ACTUALFLASH_HPP_
 
 
-#include "stm32g4xx.h"
+#include "stm32g4xx_hal.h"
 #include <stdint.h>
 
 class MX66L1G45G {

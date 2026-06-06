@@ -36,7 +36,7 @@ namespace Driver
 void run_main()
 {
   // Init Tasks
-  WatchdogTask::Inst().InitTask();
+  //WatchdogTask::Inst().InitTask();
   UARTTask::Inst().InitTask();
   CubeTask::Inst().InitTask();
   DebugTask::Inst().InitTask();
@@ -46,7 +46,7 @@ void run_main()
   TelemetryTask::Inst().InitTask();
   PressureTransducerTask::Inst().InitTask();
   TCTask::Inst().InitTask();
-  //ActualLoggingTask::Inst().InitTask();
+  ActualLoggingTask::Inst().InitTask();
 
   // Print System Boot Info : Warning, don't queue more than 10 prints before
   // scheduler starts

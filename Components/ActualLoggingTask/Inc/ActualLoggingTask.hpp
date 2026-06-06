@@ -14,7 +14,7 @@
 /************************************
  * MACROS AND DEFINES
  ************************************/
-
+#define LOGGING_DEBUG
 
 /************************************
  * TYPEDEFS
@@ -26,7 +26,7 @@
 extern QSPI_HandleTypeDef hqspi;
 
 enum LOGGING_TASK_CMDS {
-	LOG_STATE_RECO
+	CLEAR_FLASH
 };
 /************************************
  * FUNCTION DECLARATIONS
@@ -65,6 +65,9 @@ class ActualLoggingTask: public Task
 
 		uint32_t tcCurrentAddr = 0;
 		uint32_t ptCurrentAddr = 0;
+
+		uint32_t debugLogged = 0;
+		uint32_t lastDebugP = 0;
 
 		struct __attribute__((packed)) TC_Stored {
 			ThermocoupleData data;

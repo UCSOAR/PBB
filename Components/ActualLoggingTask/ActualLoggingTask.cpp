@@ -6,14 +6,6 @@
  */
 
 
-/**
- ********************************************************************************
- * @file    ActualLoggingTask.cpp
- * @author  jaddina
- * @date    Sep 13, 2025
- * @brief
- ********************************************************************************
- */
 
 /************************************
  * INCLUDES
@@ -39,10 +31,7 @@
  * FUNCTION DECLARATIONS
  ************************************/
 
-
-uint8_t ActualLoggingTask::buf[20] = {0};
 extern CRC_HandleTypeDef hcrc;
-
 
 /************************************
  * FUNCTION DEFINITIONS
@@ -60,18 +49,18 @@ ActualLoggingTask::ActualLoggingTask():Task(TASK_LOGGING_QUEUE_DEPTH_OBJS)
  */
 void ActualLoggingTask::InitTask()
 {
-    // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize actual logging task task twice");
+	// Make sure the task is not already initialized
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize actual logging task task twice");
 
-    BaseType_t rtValue =
-        xTaskCreate((TaskFunction_t)ActualLoggingTask::RunTask,
-            (const char*)"ActualLoggingTask",
-            (uint16_t)TASK_LOGGING_QUEUE_DEPTH_OBJS,
-            (void*)this,
-            (UBaseType_t)TASK_LOGGING_PRIORITY,
-            (TaskHandle_t*)&rtTaskHandle);
+	BaseType_t rtValue =
+			xTaskCreate((TaskFunction_t)ActualLoggingTask::RunTask,
+					(const char*)"ActualLoggingTask",
+					(uint16_t)TASK_LOGGING_STACK_DEPTH_WORDS,
+					(void*)this,
+					(UBaseType_t)TASK_LOGGING_PRIORITY,
+					(TaskHandle_t*)&rtTaskHandle);
 
-                SOAR_ASSERT(rtValue == pdPASS, "ActualLoggingTask::InitTask() - xTaskCreate() failed");
+	SOAR_ASSERT(rtValue == pdPASS, "ActualLoggingTask::InitTask() - xTaskCreate() failed");
 
 	DataBroker::Subscribe<ThermocoupleData>(this);
 	DataBroker::Subscribe<PBBPressureTransducerData>(this);
@@ -80,9 +69,8 @@ void ActualLoggingTask::InitTask()
 
 void ActualLoggingTask::Run(void * pvParams){
 
-	osDelay(50);
+	osDelay(5);
 	MX66L1G45G::Inst().Init();
-	//awesomeincredibleflashdriver.Init();
 	osDelay(200);
 
 	uint32_t i = TC_DATA_START_ADDR;
@@ -92,13 +80,18 @@ void ActualLoggingTask::Run(void * pvParams){
 		if(HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check)) == stored.check) {
 			// valid
 		} else {
-			tcCurrentAddr = i;
+			if(stored.check == 0xffffffff && stored.timestamp == 0xffffffff) {
+				tcCurrentAddr = i; //safe to continue from here
+			} else {
+				tcCurrentAddr = (i/4096+1)*4096; //start at next sector
+			}
 			break;
 		}
 		i+=sizeof(stored);
 	}
-	if(tcCurrentAddr == TC_DATA_START_ADDR) {
-		MX66L1G45G::Inst().EraseSector(TC_DATA_START_ADDR);
+
+	if((tcCurrentAddr%4096) == 0) {
+		MX66L1G45G::Inst().EraseSector(tcCurrentAddr);
 	}
 
 	i = PT_DATA_START_ADDR;
@@ -108,87 +101,173 @@ void ActualLoggingTask::Run(void * pvParams){
 		if(HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check)) == stored.check) {
 			// valid
 		} else {
-			ptCurrentAddr = i;
+			if(stored.check == 0xffffffff && stored.timestamp == 0xffffffff) {
+				ptCurrentAddr = i; //safe to continue from here
+			} else {
+				ptCurrentAddr = (i/4096+1)*4096; //start at next sector
+			}
+
 			break;
 		}
 		i+=sizeof(stored);
 	}
-	if(ptCurrentAddr == PT_DATA_START_ADDR) {
-		MX66L1G45G::Inst().EraseSector(PT_DATA_START_ADDR);
+
+	if((ptCurrentAddr%4096) == 0) {
+		MX66L1G45G::Inst().EraseSector(ptCurrentAddr);
 	}
 	SOAR_PRINT("Recovered %d TC logs, starting logging from there\n",tcCurrentAddr/sizeof(TC_Stored));
 	SOAR_PRINT("Recovered %d PT logs, starting logging from there\n",(ptCurrentAddr-PT_DATA_START_ADDR)/sizeof(PT_Stored));
 
-    while (1) {
-        /* Process commands in blocking mode */
-        Command cm;
-        bool res = qEvtQueue->ReceiveWait(cm);
-        if(res){
+	while (1) {
+		/* Process commands in blocking mode */
+		Command cm;
+		bool res = qEvtQueue->ReceiveWait(cm);
+		if(res){
 
-        	HandleCommand(cm);
-        }
-    }
+			HandleCommand(cm);
+		}
+
+	}
 
 }
 
 void ActualLoggingTask::HandleCommand(Command& cm){
 
 
-	DataBrokerMessageTypes messageType = DataBroker::getMessageType(cm);
+	if(cm.GetCommand() == DATA_BROKER_COMMAND) {
+		DataBrokerMessageTypes messageType = DataBroker::getMessageType(cm);
 
-	switch(messageType){
+		switch(messageType){
 
 
-	case DataBrokerMessageTypes:: TC_DATA:
-	{
+		case DataBrokerMessageTypes:: TC_DATA:
+		{
 
-		if(tcCurrentAddr >= TC_DATA_END_ADDR-sizeof(TC_Stored)) {
+			if(tcCurrentAddr >= TC_DATA_END_ADDR-sizeof(TC_Stored)) {
+				break;
+			}
+			TC_Stored stored;
+			stored.data = DataBroker::ExtractData<ThermocoupleData>(cm);
+
+			stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS;
+
+			stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
+
+			uint32_t lastSecctor = tcCurrentAddr / 4096;
+			uint32_t currentSector = (tcCurrentAddr+sizeof(stored)) / 4096;
+			if(currentSector > lastSecctor) {
+				MX66L1G45G::Inst().EraseSector(currentSector*4096);
+			}
+			if(MX66L1G45G::Inst().WriteData(tcCurrentAddr, (uint8_t*)&stored, sizeof(stored))) {
+				tcCurrentAddr += sizeof(stored);
+#ifdef LOGGING_DEBUG
+				debugLogged++;
+				if(debugLogged > 1000) {
+					uint32_t th = HAL_GetTick();
+					SOAR_PRINT("log 1000 in %dms\n",th-lastDebugP);
+					lastDebugP = th;
+					debugLogged = 0;
+				}
+#endif
+			}
+
 			break;
 		}
-		TC_Stored stored;
-		stored.data = DataBroker::ExtractData<ThermocoupleData>(cm);
 
-		stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS;
+		case DataBrokerMessageTypes:: PBB_PT_DATA:
+		{
 
-		stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
+			if(ptCurrentAddr >= PT_DATA_END_ADDR-sizeof(PT_Stored)) {
+				break;
+			}
+			PT_Stored stored;
+			stored.data = DataBroker::ExtractData<PBBPressureTransducerData>(cm);
 
+			stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS;
 
-		uint32_t lastSecctor = tcCurrentAddr / 4096;
-		uint32_t currentSector = (tcCurrentAddr+sizeof(stored)) / 4096;
-		if(currentSector > lastSecctor) {
-			MX66L1G45G::Inst().EraseSector(currentSector*4096);
-		}
-		MX66L1G45G::Inst().WriteData(tcCurrentAddr, (uint8_t*)&stored, sizeof(stored));
-		tcCurrentAddr += sizeof(stored);
-		SOAR_PRINT("logged at %d\n",tcCurrentAddr);
-		break;
-	}
+			stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
 
-	case DataBrokerMessageTypes:: PT_DATA:
-	{
+			uint32_t lastSecctor = ptCurrentAddr / 4096;
+			uint32_t currentSector = (ptCurrentAddr+sizeof(stored)) / 4096;
+			if(currentSector > lastSecctor) {
+				MX66L1G45G::Inst().EraseSector(currentSector*4096);
+			}
+			if(MX66L1G45G::Inst().WriteData(ptCurrentAddr, (uint8_t*)&stored, sizeof(stored))) {
 
-		if(ptCurrentAddr >= PT_DATA_END_ADDR-sizeof(PT_Stored)) {
+				ptCurrentAddr += sizeof(stored);
+#ifdef LOGGING_DEBUG
+				debugLogged++;
+				if(debugLogged > 1000) {
+					uint32_t th = HAL_GetTick();
+					SOAR_PRINT("log 1000 in %dms\n",th-lastDebugP);
+					lastDebugP = th;
+					debugLogged = 0;
+				}
+#endif
+			}
+
 			break;
 		}
-		PT_Stored stored;
-		stored.data = DataBroker::ExtractData<PBBPressureTransducerData>(cm);
 
-		stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS;
-
-		stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
-
-
-		uint32_t lastSecctor = ptCurrentAddr / 4096;
-		uint32_t currentSector = (ptCurrentAddr+sizeof(stored)) / 4096;
-		if(currentSector > lastSecctor) {
-			MX66L1G45G::Inst().EraseSector(currentSector*4096);
 		}
-		MX66L1G45G::Inst().WriteData(ptCurrentAddr, (uint8_t*)&stored, sizeof(stored));
-		ptCurrentAddr += sizeof(stored);
-		SOAR_PRINT("logged pt at %d\n",tcCurrentAddr);
-		break;
-	}
+	} else if(cm.GetCommand() == TASK_SPECIFIC_COMMAND) {
+		switch(cm.GetTaskCommand()) {
+		case CLEAR_FLASH: {
+			SOAR_PRINT("clearing...\n");
+			uint32_t i = TC_DATA_START_ADDR;
+			while(i < TC_DATA_END_ADDR) {
+				uint8_t thisPage[256];
+				MX66L1G45G::Inst().ReadData(i, thisPage, sizeof(thisPage));
+				bool empty = true;
+				for (uint16_t i = 0; i < sizeof(thisPage); i++) {
+					if(thisPage[i] != 0xff) {
+						empty = false;
+						break;
+					}
+				}
+				if(!empty) {
+					MX66L1G45G::Inst().EraseSector(i);
+					i = (i/4096+1)*4096;
+				}
+				else {
+					i += sizeof(thisPage);
+					if((i-TC_DATA_START_ADDR) % 4096 == 0) {
+						break;
+					}
+				}
+			}
+			SOAR_PRINT("we have destroyed %d sectors of tc\n",(i-TC_DATA_START_ADDR)/4096);
+			tcCurrentAddr = TC_DATA_START_ADDR;
 
+			i = PT_DATA_START_ADDR;
+			while(i < PT_DATA_END_ADDR) {
+				uint8_t thisPage[256];
+				MX66L1G45G::Inst().ReadData(i, thisPage, sizeof(thisPage));
+				bool empty = true;
+				for (uint16_t i = 0; i < sizeof(thisPage); i++) {
+					if(thisPage[i] != 0xff) {
+						empty = false;
+						break;
+					}
+				}
+				if(!empty) {
+					MX66L1G45G::Inst().EraseSector(i);
+					i = (i/4096+1)*4096;
+				}
+				else {
+					i += sizeof(thisPage);
+					if((i-PT_DATA_START_ADDR) % 4096 == 0) {
+						break;
+					}
+				}
+			}
+
+			SOAR_PRINT("we have destroyed %d sectors of pt\n",(i-PT_DATA_START_ADDR)/4096);
+
+			ptCurrentAddr = PT_DATA_START_ADDR;
+			break;
+		}
+		}
 	}
 
 	cm.Reset();
