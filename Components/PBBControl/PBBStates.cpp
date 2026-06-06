@@ -39,6 +39,7 @@
 PreLaunch::PreLaunch()
 {
     rsStateID = RS_PRELAUNCH;
+    ticksPerFlashLog = 2000;
 }
 
 /**
@@ -150,6 +151,7 @@ RocketState PreLaunch::HandleCommand(Command& cm)
 Fill::Fill()
 {
     rsStateID = RS_FILL;
+    ticksPerFlashLog = 200;
 
     // Clear the arm flags
     for (uint8_t i = 0; i < 2; i++)
@@ -242,6 +244,7 @@ RocketState Fill::HandleCommand(Command& cm)
 Arm::Arm()
 {
     rsStateID = RS_ARM;
+    ticksPerFlashLog = 200;
 }
 
 /**
@@ -309,6 +312,7 @@ RocketState Arm::HandleCommand(Command& cm)
 Ignition::Ignition()
 {
     rsStateID = RS_IGNITION;
+    ticksPerFlashLog = 100;
 }
 
 /**
@@ -383,6 +387,7 @@ RocketState Ignition::HandleCommand(Command& cm)
 Launch::Launch()
 {
     rsStateID = RS_LAUNCH;
+    ticksPerFlashLog = 1;
 }
 
 /**
@@ -452,6 +457,7 @@ RocketState Launch::HandleCommand(Command& cm)
 Burn::Burn()
 {
     rsStateID = RS_BURN;
+    ticksPerFlashLog = 1;
 }
 
 /**
@@ -520,6 +526,7 @@ RocketState Burn::HandleCommand(Command& cm)
 Coast::Coast()
 {
     rsStateID = RS_COAST;
+    ticksPerFlashLog = 100;
 }
 
 /**
@@ -587,6 +594,7 @@ RocketState Coast::HandleCommand(Command& cm)
 Braking::Braking()
 {
     rsStateID = RS_BRAKING;
+    ticksPerFlashLog = 100;
 }
 
 /**
@@ -650,6 +658,7 @@ RocketState Braking::HandleCommand(Command& cm)
 Descent::Descent()
 {
     rsStateID = RS_DESCENT;
+    ticksPerFlashLog = 500;
 }
 
 /**
@@ -718,6 +727,7 @@ RocketState Descent::HandleCommand(Command& cm)
 Touchdown::Touchdown()
 {
     rsStateID = RS_TOUCHDOWN;
+    ticksPerFlashLog = 2000;
 }
 
 /**
@@ -780,6 +790,7 @@ RocketState Touchdown::HandleCommand(Command& cm)
 Abort::Abort()
 {
     rsStateID = RS_ABORT;
+    ticksPerFlashLog = 2000;
 }
 
 /**
@@ -843,6 +854,7 @@ RocketState Abort::HandleCommand(Command& cm)
 Test::Test()
 {
     rsStateID = RS_TEST;
+    ticksPerFlashLog = 1000;
 }
 
 /**

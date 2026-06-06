@@ -169,9 +169,9 @@ public:
     void HandleCommand(Command& cm);
 
    Proto::RocketState GetRocketStateAsProto();
-
+   RocketState TransitionState(RocketState nextState);
 protected:
-    RocketState TransitionState(RocketState nextState);
+
 
     // Variables
     BaseRocketState* stateArray[RS_NONE];

@@ -106,7 +106,7 @@ void PBBControlTask::Run(void * pvParams)
     HAL_GPIO_WritePin(RS485_DE_GPIO_Port, RS485_DE_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(RS485_RE_GPIO_Port, RS485_RE_Pin, GPIO_PIN_RESET);
 
-
+    uint32_t i = 0;
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
         // Asynchronous tasks don't require a fixed-delay and can simply delay using xQueueReceive, it will immedietly run the next task
@@ -129,9 +129,20 @@ void PBBControlTask::Run(void * pvParams)
 
         //Process commands in blocking mode (TODO: Change to instant-processing once complete HID/DisplayTask)
         Command cm;
-        bool res = qEvtQueue->ReceiveWait(cm);
+        bool res = qEvtQueue->Receive(cm);
         if(res)
             HandleCommand(cm);
+
+        i++;
+        osDelay(10);
+        if(i > 300) {
+        	i = 0;
+        	if(rsm_->GetRocketStateAsProto() == Proto::RocketState::RS_TEST)
+        		rsm_->TransitionState(RS_BURN);
+        	else {
+        		rsm_->TransitionState(RS_TEST);
+        	}
+        }
     }
 }
 

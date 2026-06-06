@@ -192,6 +192,7 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 			if(currentSector > lastSecctor) {
 				MX66L1G45G::Inst().EraseSector(currentSector*4096);
 			}
+
 			if(MX66L1G45G::Inst().WriteData(ptCurrentAddr, (uint8_t*)&stored, sizeof(stored))) {
 
 				ptCurrentAddr += sizeof(stored);
@@ -203,8 +204,11 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 					lastDebugP = th;
 					debugLogged = 0;
 				}
+				//SOAR_PRINT("PT\n");
 #endif
 			}
+
+
 
 			break;
 		}

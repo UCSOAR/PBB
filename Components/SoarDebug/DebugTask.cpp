@@ -19,6 +19,7 @@
 #include "PressureTransducerTask.hpp"
 #include "GPIO.hpp"
 #include "TCTask.hpp"
+#include "ActualLoggingTask.hpp"
 
 /* Macros --------------------------------------------------------------------*/
 
@@ -150,7 +151,11 @@ void DebugTask::HandleDebugMessage(const char *msg)
     // Print message
     SOAR_PRINT("closing drain\n");
     GPIO::Drain::Close();
-  }
+
+} else if(strcmp(msg, "fclear") == 0) {
+	SOAR_PRINT("we are destroying flash now\n");
+	ActualLoggingTask::Inst().SendCommand({TASK_SPECIFIC_COMMAND,CLEAR_FLASH});
+}
 
   else
   {

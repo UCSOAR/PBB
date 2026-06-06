@@ -240,7 +240,7 @@ void PressureTransducerTask::SamplePressureTransducer()
 
     /* ---------------- CH3 ---------------- */
     ADC_Select_CH3();
-    osDelay(1);
+    //osDelay(1);
 
     // Real conversion
     if (HAL_ADC_Start(&hadc3) != HAL_OK)
@@ -260,7 +260,7 @@ void PressureTransducerTask::SamplePressureTransducer()
 
     /* ---------------- CH16 ---------------- */
     ADC_Select_CH16();
-    osDelay(1);
+    //osDelay(1);
 
     if (HAL_ADC_Start(&hadc3) != HAL_OK)
     {
