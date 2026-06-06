@@ -13,6 +13,7 @@
 #include "ReadBufferFixedSize.h"
 #include "WatchdogTask.hpp"
 #include "TelemetryTask.hpp"
+#include "ActualLoggingTask.hpp"
 
 // TODO NEW
 //#include "FlashTask.hpp"
@@ -195,6 +196,10 @@ void PBBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
             uint32_t paramMs = msg.get_sys_ctrl().get_cmd_param();
             paramMs = (paramMs > 0xFFFF) ? 0xFFFE : paramMs;
             TelemetryTask::Inst().SendCommand(Command(TELEMETRY_CHANGE_PERIOD, paramMs));
+        }
+        else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_FLASH_ERASE)
+        {
+            ActualLoggingTask::Inst().SendCommand({TASK_SPECIFIC_COMMAND,CLEAR_FLASH});
         }
     }
 }

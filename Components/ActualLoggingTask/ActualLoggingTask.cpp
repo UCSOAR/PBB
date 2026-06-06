@@ -18,11 +18,12 @@
 #include "DataBroker.hpp"
 #include "Task.hpp"
 #include "actualflash.hpp"
+#include <cmath>
 
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-
+#define FPRINT(f) (int)(f), (int)(fabsf((f) - (int)(f)) * 100.0f)
 /************************************
  * VARIABLES
  ************************************/
@@ -73,6 +74,8 @@ void ActualLoggingTask::Run(void * pvParams){
 	MX66L1G45G::Inst().Init();
 	osDelay(200);
 
+
+
 	uint32_t i = TC_DATA_START_ADDR;
 	while(i < TC_DATA_END_ADDR - sizeof(TC_Stored)) {
 		TC_Stored stored;
@@ -86,6 +89,9 @@ void ActualLoggingTask::Run(void * pvParams){
 				tcCurrentAddr = (i/4096+1)*4096; //start at next sector
 			}
 			break;
+		}
+		if(stored.timestamp > flashTimestampOffset) {
+			flashTimestampOffset = stored.timestamp;
 		}
 		i+=sizeof(stored);
 	}
@@ -108,6 +114,9 @@ void ActualLoggingTask::Run(void * pvParams){
 			}
 
 			break;
+		}
+		if(stored.timestamp > flashTimestampOffset) {
+			flashTimestampOffset = stored.timestamp;
 		}
 		i+=sizeof(stored);
 	}
@@ -149,7 +158,7 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 			TC_Stored stored;
 			stored.data = DataBroker::ExtractData<ThermocoupleData>(cm);
 
-			stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS;
+			stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS + flashTimestampOffset;
 
 			stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
 
@@ -183,7 +192,7 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 			PT_Stored stored;
 			stored.data = DataBroker::ExtractData<PBBPressureTransducerData>(cm);
 
-			stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS;
+			stored.timestamp = xTaskGetTickCount() * portTICK_PERIOD_MS + flashTimestampOffset;
 
 			stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
 
@@ -269,7 +278,60 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 			SOAR_PRINT("we have destroyed %d sectors of pt\n",(i-PT_DATA_START_ADDR)/4096);
 
 			ptCurrentAddr = PT_DATA_START_ADDR;
+			flashTimestampOffset = 0;
 			break;
+		}
+		case DUMP_FLASH: {
+			SOAR_PRINT("DUMPING FLASH\n");
+			uint32_t i = TC_DATA_START_ADDR;
+			uint16_t numInvalidInARow = 0;
+			while(i < TC_DATA_END_ADDR) {
+
+				TC_Stored thisTC;
+				MX66L1G45G::Inst().ReadData(i, (uint8_t*)&thisTC, sizeof(thisTC));
+				if(thisTC.check == HAL_CRC_Calculate(&hcrc, (uint32_t*)&thisTC, sizeof(thisTC)-sizeof(thisTC.check))) {
+					numInvalidInARow = 0;
+					SOAR_PRINT("TC@%u: %d.%02d, %d.%02d, %d.%02d (%lu)\n",
+					        (unsigned int)(i-TC_DATA_START_ADDR)/sizeof(TC_Stored),
+					        FPRINT(thisTC.data.temp1),
+					        FPRINT(thisTC.data.temp2),
+					        FPRINT(thisTC.data.temp3),
+					        thisTC.timestamp);
+				} else {
+					numInvalidInARow++;
+				}
+
+				if(numInvalidInARow >= 4096/sizeof(thisTC)) {
+					break;
+				}
+				i += sizeof(thisTC);
+			}
+
+			i = PT_DATA_START_ADDR;
+			numInvalidInARow = 0;
+			while(i < PT_DATA_END_ADDR) {
+
+				PT_Stored thisPT;
+				MX66L1G45G::Inst().ReadData(i, (uint8_t*)&thisPT, sizeof(thisPT));
+				if(thisPT.check == HAL_CRC_Calculate(&hcrc, (uint32_t*)&thisPT, sizeof(thisPT)-sizeof(thisPT.check))) {
+					numInvalidInARow = 0;
+					SOAR_PRINT("PT@%u: %d.%02d, %d.%02d, (%lu)\n",(unsigned int)(i-PT_DATA_START_ADDR)/sizeof(PT_Stored),
+							FPRINT((thisPT.data.pressure_1/1000)),
+							FPRINT((thisPT.data.pressure_2/1000)),
+							thisPT.timestamp);
+				} else {
+					numInvalidInARow++;
+				}
+
+				if(numInvalidInARow >= 4096/sizeof(thisPT)) {
+					break;
+				}
+				i += sizeof(thisPT);
+			}
+
+			SOAR_PRINT("DONE!!!!!!!!!!!!\n");
+			break;
+
 		}
 		}
 	}

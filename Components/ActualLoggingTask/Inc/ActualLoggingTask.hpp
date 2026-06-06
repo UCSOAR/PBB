@@ -26,7 +26,8 @@
 extern QSPI_HandleTypeDef hqspi;
 
 enum LOGGING_TASK_CMDS {
-	CLEAR_FLASH
+	CLEAR_FLASH,
+	DUMP_FLASH
 };
 /************************************
  * FUNCTION DECLARATIONS
@@ -80,6 +81,8 @@ class ActualLoggingTask: public Task
 			uint32_t timestamp;
 			uint32_t check;
 		};
+
+		uint32_t flashTimestampOffset = 0;
 
 //		static uint8_t firstAlt;
 };
