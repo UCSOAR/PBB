@@ -200,7 +200,7 @@ void ADC_Select_CH16 (void)
 	/** Configure Regular Channel
 	  */
 	  sConfig.Channel = ADC_CHANNEL_16;
-	  sConfig.Rank = ADC_REGULAR_RANK_2;
+	  sConfig.Rank = ADC_REGULAR_RANK_1;
 	  sConfig.SamplingTime = ADC_SAMPLETIME_640CYCLES_5;
 	  sConfig.SingleDiff = ADC_SINGLE_ENDED;
 	  sConfig.OffsetNumber = ADC_OFFSET_NONE;
