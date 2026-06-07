@@ -201,6 +201,7 @@ void PBBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         {
             ActualLoggingTask::Inst().SendCommand({TASK_SPECIFIC_COMMAND,CLEAR_FLASH});
         }
+
     }
 }
 
