@@ -79,23 +79,18 @@ void TCTask::Run(void * pvParams){
 	TCDriver2.SetCR0(0b10000000);
 	TCDriver3.SetCR0(0b10000000);
 
-
-
-	uint32_t last = 0;
-
     while (1) {
         Command cm;
         bool res = qEvtQueue->Receive(cm);
         if(res){
         	HandleCommand(cm);
         }
-    	uint32_t th  = HAL_GetTick();
 #define MAX(a,b) (a > b ? a : b)
-        if(th-last > MAX(ticksPerFlashLog,100) && ticksPerFlashLog != 0) {
+        osDelay(MAX(ticksPerFlashLog,100));
+
+        if(ticksPerFlashLog != 0) {
         	SampleTC();
-			last = th;
 			DataBroker::Publish<ThermocoupleData>(data);
-			//SOAR_PRINT("tc\n");
         }
     }
 
