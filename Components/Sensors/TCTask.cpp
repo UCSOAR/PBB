@@ -81,7 +81,7 @@ void TCTask::Run(void * pvParams){
 
     while (1) {
         Command cm;
-        bool res = qEvtQueue->Receive(cm);
+        bool res = qEvtQueue->ReceiveWait(cm);
         if(res){
         	HandleCommand(cm);
         }
@@ -166,15 +166,15 @@ void TCTask::TransmitProtocolTCData()
 {
 
     Proto::TelemetryMessage msg;
-	msg.set_source(Proto::Node::NODE_FCB);
+	msg.set_source(Proto::Node::NODE_PBB);
 	msg.set_target(Proto::Node::NODE_FSB);
-	Proto::FcbTemperature tempData;
-//	//      UPPER_PV_TC = 1,
-//    VENT_SOLENOID_TC = 2,
-//    DIP_TUBE_TC = 3
-	tempData.set_upper_pv_tc(data->temp1);
-	tempData.set_vent_solenoid_tc(data->temp2);
-	tempData.set_dip_tube_tc(data->temp3);
+	Proto::PbbTemperature tempData;
+
+	tempData.set_ib_temperature(data->temp1);
+	tempData.set_lower_pv_tc1(data->temp2);
+	tempData.set_low_solenoid_heater_tc(data->temp3);
+
+	msg.set_pbbTemperature(tempData);
 
 	EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
 	msg.serialize(writeBuffer);

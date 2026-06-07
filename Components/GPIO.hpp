@@ -29,15 +29,16 @@ namespace GPIO
         	mevopen = true;
         	}
 		}
+
         inline void Close() {
         	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_RESET);
         	mevopen = false;
         }
 
         inline bool IsOpen() {
-        	return HAL_GPIO_ReadPin(MEV_GPIO_Port, MEV_Pin) == GPIO_PIN_SET;
-        }
-    }
+			return HAL_GPIO_ReadPin(MEV_GPIO_Port, MEV_Pin) == GPIO_PIN_SET;
+		}
+	}
 
 	namespace Drain
 	{
@@ -60,5 +61,4 @@ namespace GPIO
 	}	
 
 }
-
 #endif /* AVIONICS_INCLUDE_SOAR_CORE_GPIO_H */
