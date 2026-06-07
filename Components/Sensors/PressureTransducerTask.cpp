@@ -23,6 +23,7 @@
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
+#define MIN(a,b) (a > b ? b : a)
 
 /************************************
  * VARIABLES
@@ -84,7 +85,6 @@ void PressureTransducerTask::Run(void * pvParams)
 		if(res)
 			HandleCommand(cm);
 
-#define MIN(a,b) (a > b ? b : a)
 		osDelay(MIN(ticksPerFlashLog, 300));
 
 		uint32_t th = HAL_GetTick();

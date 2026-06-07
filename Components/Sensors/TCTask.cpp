@@ -23,6 +23,8 @@
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
+#define MAX(a,b) (a > b ? a : b)
+#define MIN(a,b) (a > b ? b : a)
 
 /************************************
  * VARIABLES
@@ -87,8 +89,7 @@ void TCTask::Run(void * pvParams){
 		if(res){
 			HandleCommand(cm);
 		}
-#define MAX(a,b) (a > b ? a : b)
-#define MIN(a,b) (a > b ? b : a)
+
 		// limited to between 100 and 400
 		osDelay(MIN(MAX(ticksPerFlashLog,100),300));
 
