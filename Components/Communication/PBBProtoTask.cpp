@@ -109,6 +109,9 @@ void PBBProtocolTask::HandleProtobufCommandMessage(EmbeddedProto::ReadBufferFixe
 		case Proto::FcbCommand::Command::RSC_GOTO_TEST:
 			PBBControlTask::Inst().SendCommand(Command(CONTROL_ACTION, (uint16_t)RSC_GOTO_TEST));
 			break;
+		case Proto::FcbCommand::Command::RSC_ERASE_FLASH:
+			ActualLoggingTask::Inst().SendCommand({TASK_SPECIFIC_COMMAND,CLEAR_FLASH});
+			break;
 		default:
 			break;
 		}
@@ -199,7 +202,7 @@ void PBBProtocolTask::HandleProtobufControlMesssage(EmbeddedProto::ReadBufferFix
         }
         else if(msg.get_sys_ctrl().get_sys_cmd() == Proto::SystemControl::Command::SYS_FLASH_ERASE)
         {
-            ActualLoggingTask::Inst().SendCommand({TASK_SPECIFIC_COMMAND,CLEAR_FLASH});
+//            ActualLoggingTask::Inst().SendCommand({TASK_SPECIFIC_COMMAND,CLEAR_FLASH});
         }
 
     }
