@@ -37,7 +37,7 @@
  ************************************/
 TCTask::TCTask():Task(TASK_TC_QUEUE_DEPTH_OBJS)
 {
-    data = (ThermocoupleData*)soar_malloc(sizeof(ThermocoupleData));
+	data = (ThermocoupleData*)soar_malloc(sizeof(ThermocoupleData));
 }
 
 /**
@@ -46,18 +46,18 @@ TCTask::TCTask():Task(TASK_TC_QUEUE_DEPTH_OBJS)
  */
 void TCTask::InitTask()
 {
-    // Make sure the task is not already initialized
-    SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize TC task twice");
+	// Make sure the task is not already initialized
+	SOAR_ASSERT(rtTaskHandle == nullptr, "Cannot initialize TC task twice");
 
-    BaseType_t rtValue =
-        xTaskCreate((TaskFunction_t)TCTask::RunTask,
-            (const char*)"TCTask",
-            (uint16_t)TASK_TC_STACK_DEPTH_WORDS,
-            (void*)this,
-            (UBaseType_t)TASK_TC_PRIORITY,
-            (TaskHandle_t*)&rtTaskHandle);
+	BaseType_t rtValue =
+			xTaskCreate((TaskFunction_t)TCTask::RunTask,
+					(const char*)"TCTask",
+					(uint16_t)TASK_TC_STACK_DEPTH_WORDS,
+					(void*)this,
+					(UBaseType_t)TASK_TC_PRIORITY,
+					(TaskHandle_t*)&rtTaskHandle);
 
-    SOAR_ASSERT(rtValue == pdPASS, "TCTask::InitTask() - xTaskCreate() failed");
+	SOAR_ASSERT(rtValue == pdPASS, "TCTask::InitTask() - xTaskCreate() failed");
 
 
 }
@@ -78,41 +78,50 @@ void TCTask::Run(void * pvParams){
 	TCDriver1.SetCR0(0b10000000);
 	TCDriver2.SetCR0(0b10000000);
 	TCDriver3.SetCR0(0b10000000);
+	uint32_t last = HAL_GetTick();
 
-    while (1) {
-        Command cm;
-        bool res = qEvtQueue->ReceiveWait(cm);
-        if(res){
-        	HandleCommand(cm);
-        }
+	while (1) {
+		Command cm;
+
+		bool res = qEvtQueue->ReceiveWait(cm);
+		if(res){
+			HandleCommand(cm);
+		}
 #define MAX(a,b) (a > b ? a : b)
-        osDelay(MAX(ticksPerFlashLog,100));
+#define MIN(a,b) (a > b ? b : a)
+		// limited to between 100 and 400
+		osDelay(MIN(MAX(ticksPerFlashLog,100),300));
 
-        if(ticksPerFlashLog != 0) {
-        	SampleTC();
-			DataBroker::Publish<ThermocoupleData>(data);
-        }
-    }
+		uint32_t th = HAL_GetTick();
+		if(th-last > ticksPerFlashLog) {
+			last = th;
+			if(ticksPerFlashLog != 0) {
+				SampleTC();
+				DataBroker::Publish<ThermocoupleData>(data);
+			}
+
+		}
+	}
 
 }
 
 void TCTask::HandleCommand(Command& cm){
 
 	switch (cm.GetCommand()) {
-	    case REQUEST_COMMAND: {
-	        HandleRequestCommand(cm.GetTaskCommand());
-	    }
-	    case TASK_SPECIFIC_COMMAND: {
-	    	if(cm.GetTaskCommand() == TC_SET_FLASH_RATE) {
-	    		ticksPerFlashLog = *(uint32_t*)cm.GetDataPointer();
-	    		SOAR_PRINT("tc rate %d\n",ticksPerFlashLog);
-	    	}
-	        break;
-	    }
-	    default:
-	        SOAR_PRINT("TCTask - Received Unsupported Command {%d}\n", cm.GetCommand());
-	        break;
-	    }
+	case REQUEST_COMMAND: {
+		HandleRequestCommand(cm.GetTaskCommand());
+	}
+	case TASK_SPECIFIC_COMMAND: {
+		if(cm.GetTaskCommand() == TC_SET_FLASH_RATE) {
+			ticksPerFlashLog = *(uint32_t*)cm.GetDataPointer();
+			SOAR_PRINT("tc rate %d\n",ticksPerFlashLog);
+		}
+		break;
+	}
+	default:
+		SOAR_PRINT("TCTask - Received Unsupported Command {%d}\n", cm.GetCommand());
+		break;
+	}
 	cm.Reset();
 
 	return;
@@ -125,27 +134,27 @@ void TCTask::HandleCommand(Command& cm){
  */
 void TCTask::HandleRequestCommand(uint16_t taskCommand)
 {
-    //Switch for task specific command within DATA_COMMAND
-    switch (taskCommand) {
-    case TC_REQUEST_NEW_SAMPLE:
-        SampleTC();
-        break;
-    case TC_REQUEST_TRANSMIT:
-    	SampleTC();
-    	TransmitProtocolTCData();
-        break;
-    case TC_REQUEST_DEBUG:
+	//Switch for task specific command within DATA_COMMAND
+	switch (taskCommand) {
+	case TC_REQUEST_NEW_SAMPLE:
+		SampleTC();
+		break;
+	case TC_REQUEST_TRANSMIT:
+		SampleTC();
+		TransmitProtocolTCData();
+		break;
+	case TC_REQUEST_DEBUG:
 
-        SOAR_PRINT("|TC_TASK| TC (C): %d.%d, %d.%d, %d.%d, MCU Timestamp: %u\r\n",
-        		int(data->temp1),abs(int(data->temp1*100-int(data->temp1)*100)),
+		SOAR_PRINT("|TC_TASK| TC (C): %d.%d, %d.%d, %d.%d, MCU Timestamp: %u\r\n",
+				int(data->temp1),abs(int(data->temp1*100-int(data->temp1)*100)),
 				int(data->temp2),abs(int(data->temp2*100-int(data->temp2)*100)),
 				int(data->temp3),abs(int(data->temp3*100-int(data->temp3)*100)),
-        		TICKS_TO_MS(xTaskGetTickCount()));
-        break;
-    default:
-        SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
-        break;
-    }
+				TICKS_TO_MS(xTaskGetTickCount()));
+		break;
+	default:
+		SOAR_PRINT("UARTTask - Received Unsupported REQUEST_COMMAND {%d}\n", taskCommand);
+		break;
+	}
 }
 
 void TCTask::SampleTC()
@@ -165,7 +174,7 @@ void TCTask::SampleTC()
 void TCTask::TransmitProtocolTCData()
 {
 
-    Proto::TelemetryMessage msg;
+	Proto::TelemetryMessage msg;
 	msg.set_source(Proto::Node::NODE_PBB);
 	msg.set_target(Proto::Node::NODE_FSB);
 	Proto::PbbTemperature tempData;
@@ -179,6 +188,6 @@ void TCTask::TransmitProtocolTCData()
 	EmbeddedProto::WriteBufferFixedSize<DEFAULT_PROTOCOL_WRITE_BUFFER_SIZE> writeBuffer;
 	msg.serialize(writeBuffer);
 
-    // Send the barometer data
+	// Send the barometer data
 	PBBProtocolTask::SendProtobufMessage(writeBuffer, Proto::MessageID::MSG_TELEMETRY);
 }
