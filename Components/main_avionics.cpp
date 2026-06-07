@@ -18,6 +18,7 @@
 #include "TelemetryTask.hpp"
 #include "PressureTransducerTask.hpp"
 #include "TCTask.hpp"
+#include "ActualLoggingTask.hpp"
 
 /* Drivers ------------------------------------------------------------------*/
 namespace Driver
@@ -39,12 +40,12 @@ void run_main()
   UARTTask::Inst().InitTask();
   CubeTask::Inst().InitTask();
   DebugTask::Inst().InitTask();
-//  FlashTask::Inst().InitTask();
   PBBControlTask::Inst().InitTask();
   PBBProtocolTask::Inst().InitTask();
   TelemetryTask::Inst().InitTask();
   PressureTransducerTask::Inst().InitTask();
   TCTask::Inst().InitTask();
+  ActualLoggingTask::Inst().InitTask();
 
   // Print System Boot Info : Warning, don't queue more than 10 prints before
   // scheduler starts

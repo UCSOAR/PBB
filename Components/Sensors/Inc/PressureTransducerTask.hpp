@@ -15,25 +15,25 @@
  ************************************/
 #include "Task.hpp"
 #include "SystemDefines.hpp"
+#include "SensorDataTypes.hpp"
 
 /************************************
  * MACROS AND DEFINES
  ************************************/
+#define BIGDUMPSIZE 5000
+
 enum PT_TASK_COMMANDS {
     PT_NONE = 0,
     PT_REQUEST_NEW_SAMPLE,// Get a new pressure transducer sample, task will be blocked for polling time
     PT_REQUEST_TRANSMIT,    // Send the current pressure transducer data over the Radio
     PT_REQUEST_DEBUG,        // Send the current pressure transducer data over the Debug UART
+	PT_SET_FLASH_RATE
 };
 
 /************************************
  * TYPEDEFS
  ************************************/
-typedef struct
-{
-    int32_t     pressure_1;
-    int32_t     pressure_2;
-} PressureTransducerData;
+
 
 //ADC Handles
 extern ADC_HandleTypeDef hadc3;      // ADC1 - PT1
@@ -64,8 +64,18 @@ protected:
     void TransmitProtocolPressureData();
 
     // Data
-    PressureTransducerData* data;
+    PBBPressureTransducerData* data;
     uint32_t timestampPT;
+
+    uint32_t ticksPerFlashLog = 0;
+    uint32_t bigdumpi = 0;
+
+    struct __attribute__((packed)) PTRambufData {
+    	PBBPressureTransducerData data;
+    	uint32_t timestamp;
+    };
+
+    PTRambufData* bigdump;
 
 private:
     PressureTransducerTask();                                        // Private constructor

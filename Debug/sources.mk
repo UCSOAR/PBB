@@ -38,9 +38,10 @@ CPP_DEPS :=
 
 # Every subdirectory with source files must be described here
 SUBDIRS := \
+Components/ActualFlash \
+Components/ActualLoggingTask \
 Components/Communication \
 Components/FlightSafety \
-Components/LoggingModule \
 Components/PBBControl \
 Components \
 Components/Sensors \

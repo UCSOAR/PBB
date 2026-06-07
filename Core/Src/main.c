@@ -185,7 +185,7 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLM = RCC_PLLM_DIV1;
-  RCC_OscInitStruct.PLL.PLLN = 12;
+  RCC_OscInitStruct.PLL.PLLN = 32;
   RCC_OscInitStruct.PLL.PLLP = RCC_PLLP_DIV2;
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
@@ -201,7 +201,7 @@ void SystemClock_Config(void)
   RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_PLLCLK;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
-  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
+  RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV2;
 
   if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_1) != HAL_OK)
   {
@@ -328,7 +328,7 @@ static void MX_I2C3_Init(void)
 
   /* USER CODE END I2C3_Init 1 */
   hi2c3.Instance = I2C3;
-  hi2c3.Init.Timing = 0x20303E5D;
+  hi2c3.Init.Timing = 0x20A0C4DF;
   hi2c3.Init.OwnAddress1 = 0;
   hi2c3.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c3.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -377,10 +377,10 @@ static void MX_QUADSPI1_Init(void)
   /* USER CODE END QUADSPI1_Init 1 */
   /* QUADSPI1 parameter configuration*/
   hqspi1.Instance = QUADSPI;
-  hqspi1.Init.ClockPrescaler = 255;
-  hqspi1.Init.FifoThreshold = 1;
+  hqspi1.Init.ClockPrescaler = 8;
+  hqspi1.Init.FifoThreshold = 4;
   hqspi1.Init.SampleShifting = QSPI_SAMPLE_SHIFTING_NONE;
-  hqspi1.Init.FlashSize = 1;
+  hqspi1.Init.FlashSize = 25;
   hqspi1.Init.ChipSelectHighTime = QSPI_CS_HIGH_TIME_1_CYCLE;
   hqspi1.Init.ClockMode = QSPI_CLOCK_MODE_0;
   hqspi1.Init.FlashID = QSPI_FLASH_ID_1;
@@ -635,7 +635,10 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_WritePin(GPIOC, DRAIN_Pin|GPIO_PIN_2|SPI2_TC_CS2_N_Pin, GPIO_PIN_RESET);
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(GPIOA, FLASH_RESET_Pin|QSPI_BK_NCS_Pin|SPI2_TC_CS3_N_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, FLASH_RESET_Pin|SPI2_TC_CS3_N_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(QSPI_BK_NCS_GPIO_Port, QSPI_BK_NCS_Pin, GPIO_PIN_SET);
 
   /*Configure GPIO pin Output Level */
   HAL_GPIO_WritePin(GPIOB, RS485_DE_Pin|HEATER_Pin|MEV_Pin, GPIO_PIN_RESET);
@@ -662,12 +665,19 @@ static void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   HAL_GPIO_Init(TC_FAULT2_OUT_N_GPIO_Port, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : FLASH_RESET_Pin QSPI_BK_NCS_Pin SPI2_TC_CS3_N_Pin */
-  GPIO_InitStruct.Pin = FLASH_RESET_Pin|QSPI_BK_NCS_Pin|SPI2_TC_CS3_N_Pin;
+  /*Configure GPIO pins : FLASH_RESET_Pin SPI2_TC_CS3_N_Pin */
+  GPIO_InitStruct.Pin = FLASH_RESET_Pin|SPI2_TC_CS3_N_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pin : QSPI_BK_NCS_Pin */
+  GPIO_InitStruct.Pin = QSPI_BK_NCS_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+  HAL_GPIO_Init(QSPI_BK_NCS_GPIO_Port, &GPIO_InitStruct);
 
   /*Configure GPIO pins : RS485_DE_Pin HEATER_Pin MEV_Pin */
   GPIO_InitStruct.Pin = RS485_DE_Pin|HEATER_Pin|MEV_Pin;

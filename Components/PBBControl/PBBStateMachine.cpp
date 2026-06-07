@@ -13,6 +13,8 @@
 #include "PBBStateMachine.hpp"
 #include "PBBStates.hpp"
 #include "SystemDefines.hpp"
+#include "PressureTransducerTask.hpp"
+#include "TCTask.hpp"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -102,6 +104,16 @@ RocketState RocketSM::TransitionState(RocketState nextState)
 
     SOAR_PRINT("ROCKET STATE TRANSITION [ %s ] --> [ %s ]\n", BaseRocketState::StateToString(previousState), BaseRocketState::StateToString(rs_currentState->GetStateID()));
 
+
+    uint32_t flashrate = rs_currentState->GetTicksPerFlashLog();
+
+    Command ptflashratecmd = {TASK_SPECIFIC_COMMAND,PT_SET_FLASH_RATE};
+    ptflashratecmd.CopyDataToCommand((uint8_t*)&flashrate, sizeof(flashrate));
+    PressureTransducerTask::Inst().SendCommandReference(ptflashratecmd);
+
+    Command tcflashratecmd = {TASK_SPECIFIC_COMMAND,TC_SET_FLASH_RATE};
+    tcflashratecmd.CopyDataToCommand((uint8_t*)&flashrate, sizeof(flashrate));
+    TCTask::Inst().SendCommandReference(tcflashratecmd);
     // Return the state after the transition
     return rs_currentState->GetStateID();
 }

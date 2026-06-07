@@ -14,6 +14,8 @@
 #include "PBBStateMachine.hpp"
 #include "PBBProtoTask.hpp"
 #include "TimerTransitions.hpp"
+#include "StateReco.hpp"
+
 
 // TODO NEW
 //#include "UARTProtocolTask.hpp"
@@ -101,11 +103,17 @@ void PBBControlTask::Run(void * pvParams)
 //        rsm_ = new RocketSM(RS_ABORT, true);
 //    }
 
-    rsm_ = new RocketSM(RS_ABORT, true);
+     osDelay(10);
+     RocketState recovered = StateRecoverer::Inst().GetMostRecentState();
+     if(recovered != RocketState::RS_NONE) {
+     	SOAR_PRINT("Recovered state %d\n",recovered);
+
+     }
+
+     rsm_ = new RocketSM(recovered == RocketState::RS_NONE ? RocketState::RS_ABORT : recovered, true);
 
     HAL_GPIO_WritePin(RS485_DE_GPIO_Port, RS485_DE_Pin, GPIO_PIN_RESET);
     HAL_GPIO_WritePin(RS485_RE_GPIO_Port, RS485_RE_Pin, GPIO_PIN_RESET);
-
 
     while (1) {
         // There's effectively 3 types of tasks... 'Async' and 'Synchronous-Blocking' and 'Synchronous-Non-Blocking'
@@ -132,6 +140,7 @@ void PBBControlTask::Run(void * pvParams)
         bool res = qEvtQueue->ReceiveWait(cm);
         if(res)
             HandleCommand(cm);
+
     }
 }
 

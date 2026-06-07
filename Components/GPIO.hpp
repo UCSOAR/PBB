@@ -14,12 +14,14 @@
 #include "SystemDefines.hpp"
 #include "main.h"
 #include "stm32g4xx_hal.h"
-#include "SolenoidStates.hpp"
+#include "solstates.hpp"
 
 namespace GPIO
 {
+
     namespace _MAIN_ENGINE_VALVE
     {
+
         inline void Open() {
         	if(!drainopen) {
         	HAL_GPIO_WritePin(MEV_GPIO_Port, MEV_Pin, GPIO_PIN_SET);

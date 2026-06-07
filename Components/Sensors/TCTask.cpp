@@ -17,6 +17,7 @@
 #include "main.h"
 #include "ProtocolTask.hpp"
 #include "PBBProtoTask.hpp"
+#include "DataBroker.hpp"
 
 
 /************************************
@@ -78,19 +79,19 @@ void TCTask::Run(void * pvParams){
 	TCDriver2.SetCR0(0b10000000);
 	TCDriver3.SetCR0(0b10000000);
 
-
-
     while (1) {
-        /* Process commands in blocking mode */
-
         Command cm;
         bool res = qEvtQueue->ReceiveWait(cm);
         if(res){
         	HandleCommand(cm);
         }
+#define MAX(a,b) (a > b ? a : b)
+        osDelay(MAX(ticksPerFlashLog,100));
 
-//        osDelay(1000);
-//    	SampleTC();
+        if(ticksPerFlashLog != 0) {
+        	SampleTC();
+			DataBroker::Publish<ThermocoupleData>(data);
+        }
     }
 
 }
@@ -102,6 +103,10 @@ void TCTask::HandleCommand(Command& cm){
 	        HandleRequestCommand(cm.GetTaskCommand());
 	    }
 	    case TASK_SPECIFIC_COMMAND: {
+	    	if(cm.GetTaskCommand() == TC_SET_FLASH_RATE) {
+	    		ticksPerFlashLog = *(uint32_t*)cm.GetDataPointer();
+	    		SOAR_PRINT("tc rate %d\n",ticksPerFlashLog);
+	    	}
 	        break;
 	    }
 	    default:
