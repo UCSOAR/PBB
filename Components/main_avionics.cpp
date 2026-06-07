@@ -36,11 +36,10 @@ namespace Driver
 void run_main()
 {
   // Init Tasks
-  //WatchdogTask::Inst().InitTask();
+  WatchdogTask::Inst().InitTask();
   UARTTask::Inst().InitTask();
   CubeTask::Inst().InitTask();
   DebugTask::Inst().InitTask();
-//  FlashTask::Inst().InitTask();
   PBBControlTask::Inst().InitTask();
   PBBProtocolTask::Inst().InitTask();
   TelemetryTask::Inst().InitTask();

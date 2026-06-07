@@ -279,6 +279,41 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 
 			ptCurrentAddr = PT_DATA_START_ADDR;
 			flashTimestampOffset = 0;
+
+			break;
+		}
+
+		case LOG_FROM_RAMBUF: {
+			if(ptCurrentAddr >= PT_DATA_END_ADDR-sizeof(PT_Stored)) {
+				break;
+			}
+			PT_Stored stored;
+			stored.data = *(PBBPressureTransducerData*)cm.GetDataPointer();
+
+			stored.timestamp = *(uint32_t*)(cm.GetDataPointer()+sizeof(PBBPressureTransducerData)) + flashTimestampOffset;
+
+			stored.check = HAL_CRC_Calculate(&hcrc, (uint32_t*)&stored, sizeof(stored)-sizeof(stored.check));
+
+			uint32_t lastSecctor = ptCurrentAddr / 4096;
+			uint32_t currentSector = (ptCurrentAddr+sizeof(stored)) / 4096;
+			if(currentSector > lastSecctor) {
+				MX66L1G45G::Inst().EraseSector(currentSector*4096);
+			}
+			if(MX66L1G45G::Inst().WriteData(ptCurrentAddr, (uint8_t*)&stored, sizeof(stored))) {
+
+				ptCurrentAddr += sizeof(stored);
+#ifdef LOGGING_DEBUG
+				debugLogged++;
+				if(debugLogged > 1000) {
+					uint32_t th = HAL_GetTick();
+					SOAR_PRINT("log 1000 in %dms\n",th-lastDebugP);
+					lastDebugP = th;
+					debugLogged = 0;
+				}
+#endif
+			}
+
+
 			break;
 		}
 		case DUMP_FLASH: {
@@ -292,11 +327,11 @@ void ActualLoggingTask::HandleCommand(Command& cm){
 				if(thisTC.check == HAL_CRC_Calculate(&hcrc, (uint32_t*)&thisTC, sizeof(thisTC)-sizeof(thisTC.check))) {
 					numInvalidInARow = 0;
 					SOAR_PRINT("TC@%u: %d.%02d, %d.%02d, %d.%02d (%lu)\n",
-					        (unsigned int)(i-TC_DATA_START_ADDR)/sizeof(TC_Stored),
-					        FPRINT(thisTC.data.temp1),
-					        FPRINT(thisTC.data.temp2),
-					        FPRINT(thisTC.data.temp3),
-					        thisTC.timestamp);
+							(unsigned int)(i-TC_DATA_START_ADDR)/sizeof(TC_Stored),
+							FPRINT(thisTC.data.temp1),
+							FPRINT(thisTC.data.temp2),
+							FPRINT(thisTC.data.temp3),
+							thisTC.timestamp);
 				} else {
 					numInvalidInARow++;
 				}

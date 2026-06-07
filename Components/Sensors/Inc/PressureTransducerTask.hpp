@@ -20,7 +20,7 @@
 /************************************
  * MACROS AND DEFINES
  ************************************/
-#define BIGDUMPSIZE 1000
+#define BIGDUMPSIZE 5000
 
 enum PT_TASK_COMMANDS {
     PT_NONE = 0,
@@ -69,7 +69,13 @@ protected:
 
     uint32_t ticksPerFlashLog = 0;
     uint32_t bigdumpi = 0;
-    PBBPressureTransducerData* bigdump;
+
+    struct __attribute__((packed)) PTRambufData {
+    	PBBPressureTransducerData data;
+    	uint32_t timestamp;
+    };
+
+    PTRambufData* bigdump;
 
 private:
     PressureTransducerTask();                                        // Private constructor

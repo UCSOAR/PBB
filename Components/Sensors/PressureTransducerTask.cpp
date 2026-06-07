@@ -18,6 +18,7 @@
 #include "PBBProtoTask.hpp"
 #include "CubeUtils.hpp"
 #include "DataBroker.hpp"
+#include "ActualLoggingTask.hpp"
 
 /************************************
  * PRIVATE MACROS AND DEFINES
@@ -40,7 +41,7 @@
 PressureTransducerTask::PressureTransducerTask() : Task(TASK_PRESSURE_TRANSDUCER_QUEUE_DEPTH_OBJS)
 {
     data = (PBBPressureTransducerData*)soar_malloc(sizeof(PBBPressureTransducerData));
-	bigdump = (PBBPressureTransducerData*)soar_malloc(sizeof(PBBPressureTransducerData)*BIGDUMPSIZE);
+	bigdump = (PTRambufData*)soar_malloc(sizeof(PTRambufData)*BIGDUMPSIZE);
 }
 
 /**
@@ -70,7 +71,7 @@ void PressureTransducerTask::InitTask()
  */
 void PressureTransducerTask::Run(void * pvParams)
 {
-	uint32_t last = 0;
+
 	bool reporteddumpstat = false;
 	while (1) {
 		Command cm;
@@ -82,12 +83,12 @@ void PressureTransducerTask::Run(void * pvParams)
 		if(res)
 			HandleCommand(cm);
 
-		uint32_t th = HAL_GetTick();
+		osDelay(ticksPerFlashLog);
 
-		if(th - last > ticksPerFlashLog && ticksPerFlashLog != 0) {
+		if(ticksPerFlashLog != 0) {
 			SamplePressureTransducer();
 			if(ticksPerFlashLog < 3 && bigdumpi < BIGDUMPSIZE) {
-				bigdump[bigdumpi++] = *data;
+				bigdump[bigdumpi++] = {*data,HAL_GetTick()};
 				if(!reporteddumpstat) {
 					SOAR_PRINT("we have switched to big dump, starting at %d!\n",bigdumpi);
 					reporteddumpstat = true;
@@ -96,12 +97,13 @@ void PressureTransducerTask::Run(void * pvParams)
 				DataBroker::Publish<PBBPressureTransducerData>(data);
 			}
 
-			last = th;
 		}
 
-		if(bigdumpi > 0 && ticksPerFlashLog >= 3) {
-			for(uint16_t i = 0; i < 1; i++) {
-				DataBroker::Publish<PBBPressureTransducerData>(&bigdump[--bigdumpi]);
+		if(bigdumpi > 0 && (ticksPerFlashLog >= 3 || ticksPerFlashLog == 0)) {
+			for(uint16_t i = 0; i < 10; i++) {
+				Command cm = {TASK_SPECIFIC_COMMAND,LOG_FROM_RAMBUF};
+				cm.CopyDataToCommand((uint8_t*)&bigdump[--bigdumpi], sizeof(bigdump[0]));
+				ActualLoggingTask::Inst().SendCommandReference(cm);
 				if(bigdumpi == 0) {
 					SOAR_PRINT("done catching up!\n");
 					break;
@@ -113,9 +115,6 @@ void PressureTransducerTask::Run(void * pvParams)
 			}
 
 		}
-
-		//        SamplePressureTransducer();
-		//        osDelay(500);
 	}
 }
 

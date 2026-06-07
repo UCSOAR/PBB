@@ -27,7 +27,8 @@ extern QSPI_HandleTypeDef hqspi;
 
 enum LOGGING_TASK_CMDS {
 	CLEAR_FLASH,
-	DUMP_FLASH
+	DUMP_FLASH,
+	LOG_FROM_RAMBUF
 };
 /************************************
  * FUNCTION DECLARATIONS

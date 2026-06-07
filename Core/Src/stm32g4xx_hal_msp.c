@@ -297,7 +297,7 @@ void HAL_QSPI_MspInit(QSPI_HandleTypeDef* hqspi)
   /** Initializes the peripherals clocks
   */
     PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_QSPI;
-    PeriphClkInit.QspiClockSelection = RCC_QSPICLKSOURCE_SYSCLK;
+    PeriphClkInit.QspiClockSelection = RCC_QSPICLKSOURCE_PLL;
 
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
     {
