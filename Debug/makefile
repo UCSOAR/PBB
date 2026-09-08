@@ -104,8 +104,8 @@ all: main-build
 main-build: PBB secondary-outputs
 
 # Tool invocations
-PBB PBB.map: $(OBJS) $(USER_OBJS) C:\Users\shiva\Documents\SOAR\Software\Aegis\PBB\STM32G491MESX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "PBB" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\shiva\Documents\SOAR\Software\Aegis\PBB\STM32G491MESX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PBB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+PBB PBB.map: $(OBJS) $(USER_OBJS) C:\Users\Owner\Desktop\SOAR\PBB\STM32G491METX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "PBB" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m4 -T"C:\Users\Owner\Desktop\SOAR\PBB\STM32G491METX_FLASH.ld" --specs=nosys.specs -Wl,-Map="PBB.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv4-sp-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 
